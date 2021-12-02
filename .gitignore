@@ -1,0 +1,4 @@
+# examples/*.yarnc
+# examples/*.csv
+**/__pycache__
+.python-version

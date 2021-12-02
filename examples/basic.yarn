@@ -1,0 +1,15 @@
+title: Start
+---
+This is the first node.
+
+[[Choice 1|choice_1]]
+[[Choice 2|choice_2]]
+===
+title: choice_1
+---
+
+Here is the node visited as a **result** of the __first__ "choice", with a comma.
+
+<<runACommand arg1 2 event:/event/event_name >>
+
+===

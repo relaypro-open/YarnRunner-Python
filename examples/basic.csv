@@ -1,0 +1,5 @@
+id,text,file,node,lineNumber
+basic-Start-0,This is the first node.,basic,Start,3
+basic-Start-1,Choice 1,basic,Start,5
+basic-Start-2,Choice 2,basic,Start,6
+basic-choice_1-3,"Here is the node visited as a **result** of the __first__ ""choice"", with a comma.",basic,choice_1,11
