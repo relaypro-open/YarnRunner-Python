@@ -76,8 +76,15 @@ Only a subset of Yarn Spinner opcodes are currently implemented. This will certa
 
 This project uses Python 3 and has a basic test suite.
 
-1. `pip install -r requirements.txt`
-2. `py.test`
+1. Install dependencies by running `pip install -r requirements.txt`
+2. Run `py.test`
+
+To make a release:
+
+1. Make sure you have the latest version of `build` installed:
+   > `pip install --upgrade build`
+2. Increment the `version` key in `setup.cfg`.
+3. Run `python -m build`.
 
 ## Updating the examples
 

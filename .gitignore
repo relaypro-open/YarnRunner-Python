@@ -2,3 +2,5 @@
 # examples/*.csv
 **/__pycache__
 .python-version
+*.egg-info/
+dist/
