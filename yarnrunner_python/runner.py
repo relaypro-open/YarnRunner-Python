@@ -10,6 +10,7 @@ class YarnRunner(object):
         self.__construct_string_lookup_table()
 
         self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
+        self.current_node = None
         self._command_handlers = {}
         self._line_buffer = []
         self._option_buffer = []
@@ -46,11 +47,15 @@ class YarnRunner(object):
 
     def debug_vm(self):
         print(f"VM paused: {self.paused}")
+        print(f"VM finished: {self.finished}")
+        self.debug_vm_instruction_stack()
+        print("The current VM data stack is:")
+        print(self._vm_data_stack)
+
+    def debug_vm_instruction_stack(self):
         print("The current VM instruction stack is:")
         for (idx, instruction) in enumerate(self._vm_instruction_stack):
             print(f"    {idx}: {Instruction.OpCode.Name(instruction.opcode)}")
-        print("The current VM data stack is:")
-        print(self._vm_data_stack)
 
     def debug_program_proto(self):
         print("The protobuf representation of the current program is:")
@@ -96,8 +101,11 @@ class YarnRunner(object):
             raise Exception(
                 f"{node_key} is not a valid node in this Yarn story.")
 
+        self.current_node = node_key
         self.visits[node_key] += 1
-        self._vm_instruction_stack.extend(
+        # FIXME: shouldn't need to overwrite the stack, but STOP opcodes
+        # are generated on jumps for some reason
+        self._vm_instruction_stack = (
             self._compiled_yarn.nodes[node_key].instructions)
         self.__process_instruction()
 
@@ -128,16 +136,22 @@ class YarnRunner(object):
     def __show_options(self, _instruction):
         self.paused = True
 
-    def stop(self, _instruction):
+    def __stop(self, _instruction):
         self.finished = True
 
-    def __run_node(self, _instruction):
+    def __run_node(self, instruction):
+        # FIXME: this is not to spec, but it's how the yarn compiler generates this opcode
+        # if this opcode has a string operand, use that instead
+        if (len(instruction.operands) > 0):
+            node_key = instruction.operands[0].string_value
         # confirm there's a string to jump to
-        if len(self._vm_data_stack) < 1 or type(self._vm_data_stack[0]) != str:
-            raise Exception(
-                "The RUN_NODE opcode requires a string to be on the top of the stack. A string is not currently present.")
+        else:
+            if len(self._vm_data_stack) < 1 or type(self._vm_data_stack[0]) != str:
+                raise Exception(
+                    "The RUN_NODE opcode requires a string to be on the top of the stack. A string is not currently present.")
+            else:
+                node_key = self._vm_data_stack.pop(0)
 
-        node_key = self._vm_data_stack.pop(0)
         self.__go_to_node(node_key)
 
     def __process_instruction(self):
@@ -169,7 +183,7 @@ class YarnRunner(object):
             Instruction.OpCode.CALL_FUNC: noop,
             Instruction.OpCode.PUSH_VARIABLE: noop,
             Instruction.OpCode.STORE_VARIABLE: noop,
-            Instruction.OpCode.STOP: self.stop,
+            Instruction.OpCode.STOP: self.__stop,
             Instruction.OpCode.RUN_NODE: self.__run_node,
         }
 
