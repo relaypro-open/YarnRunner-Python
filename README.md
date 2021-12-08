@@ -54,7 +54,7 @@ Only a subset of Yarn Spinner opcodes are currently implemented. This will certa
 
 | OpCode           | Status                                                 |
 | ---------------- | ------------------------------------------------------ |
-| `JUMP_TO`        | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `JUMP_TO`        | ✅&nbsp;&nbsp;Implemented in `runner.__jump_to`        |
 | `JUMP`           | 🚫&nbsp;&nbsp;Not Implemented                          |
 | `RUN_LINE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_line`       |
 | `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`    |
@@ -64,9 +64,9 @@ Only a subset of Yarn Spinner opcodes are currently implemented. This will certa
 | `PUSH_FLOAT`     | ✅&nbsp;&nbsp;Implemented in `runner.__push_float`     |
 | `PUSH_BOOL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
 | `PUSH_NULL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
-| `JUMP_IF_FALSE`  | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `JUMP_IF_FALSE`  | ✅&nbsp;&nbsp;Implemented in `runner.__jump_if_false`  |
 | `POP`            | ✅&nbsp;&nbsp;Implemented in `runner.__pop`            |
-| `CALL_FUNC`      | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `CALL_FUNC`      | ✅&nbsp;&nbsp;Implemented in `runner.__call_func`      |
 | `PUSH_VARIABLE`  | ✅&nbsp;&nbsp;Implemented in `runner.__push_variable`  |
 | `STORE_VARIABLE` | ✅&nbsp;&nbsp;Implemented in `runner.__store_variable` |
 | `STOP`           | ✅&nbsp;&nbsp;Implemented in `runner.__stop`           |

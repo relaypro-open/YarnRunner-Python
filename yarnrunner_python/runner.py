@@ -1,6 +1,7 @@
 import csv
 from warnings import warn
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
+from .vm_std_lib import functions as std_lib_functions
 
 
 class YarnRunner(object):
@@ -48,6 +49,14 @@ class YarnRunner(object):
         else:
             return self.string_lookup_table[string_key]["text"]
 
+    def __find_label(self, label_key):
+        labels = self._compiled_yarn.nodes[self.current_node].labels
+        if label_key in labels:
+            return labels[label_key]
+        else:
+            raise Exception(
+                f"The current node `{self.current_node}` does not have a label named `{label_key}")
+
     def debug_vm(self):
         print(f"VM paused: {self.paused}")
         print(f"VM finished: {self.finished}")
@@ -61,10 +70,16 @@ class YarnRunner(object):
         print(self.variables)
 
     def debug_vm_instruction_stack(self):
-        print(f"The current program counter is: {self._program_counter}")
+        print(f"The current node is: {self.current_node}")
         print("The current VM instruction stack is:")
         for (idx, instruction) in enumerate(self._vm_instruction_stack):
-            print(f"    {idx}: {Instruction.OpCode.Name(instruction.opcode)}")
+            arrow = "-->" if idx == self._program_counter else "   "
+            print(
+                f"{arrow} {idx}: {Instruction.OpCode.Name(instruction.opcode)}(", end='')
+            print(*list(map(lambda o: o.string_value or o.float_value,
+                  instruction.operands)), sep=", ", end=")\n")
+        print("The current labels are:")
+        print(self._compiled_yarn.nodes[self.current_node].labels)
 
     def debug_program_proto(self):
         print("The protobuf representation of the current program is:")
@@ -105,7 +120,14 @@ class YarnRunner(object):
 
     ##### OpCode Implementations below here #####
 
+    def __jump_to(self, instruction):
+        # print(f"Jump from {self._program_counter} ", end='')
+        self._program_counter = self.__find_label(
+            instruction.operands[0].string_value)
+        print(f"to {self._program_counter}")
+
     def __go_to_node(self, node_key):
+        # print(f"Go from {self.current_node} to node {node_key}")
         if node_key not in self._compiled_yarn.nodes.keys():
             raise Exception(
                 f"{node_key} is not a valid node in this Yarn story.")
@@ -147,8 +169,36 @@ class YarnRunner(object):
     def __push_float(self, instruction):
         self._vm_data_stack.insert(0, instruction.operands[0].float_value)
 
+    def __jump_if_false(self, instruction):
+        if self._vm_data_stack[0] == False:
+            self.__jump_to(instruction)
+
     def __pop(self, _instruction):
         self._vm_data_stack.pop(0)
+
+    def __call_func(self, instruction):
+        function_name = instruction.operands[0].string_value
+        if function_name not in std_lib_functions:
+            raise Exception(
+                f"The internal function `{function_name}` is not implemented in this Yarn runtime.")
+
+        expected_params, fn = std_lib_functions[function_name]
+        actual_params = int(self._vm_data_stack.pop(0))
+
+        if expected_params != actual_params:
+            raise Exception(
+                f"The internal function `{function_name} expects {expected_params} parameters but received {actual_params} parameters")
+
+        params = []
+        while expected_params > 0:
+            params.insert(0, self._vm_data_stack.pop(0))
+            expected_params -= 1
+
+        # invoke the function
+        ret = fn(params)
+
+        # Store the return value on the stack
+        self._vm_data_stack.insert(0, ret)
 
     def __push_variable(self, instruction):
         self._vm_data_stack.insert(
@@ -193,7 +243,7 @@ class YarnRunner(object):
                 f"OpCode {Instruction.OpCode.Name(instruction.opcode)} is not yet implemented")
 
         opcode_functions = {
-            Instruction.OpCode.JUMP_TO: noop,
+            Instruction.OpCode.JUMP_TO: self.__jump_to,
             Instruction.OpCode.JUMP: noop,
             Instruction.OpCode.RUN_LINE: self.__run_line,
             Instruction.OpCode.RUN_COMMAND: self.__run_command,
@@ -203,9 +253,9 @@ class YarnRunner(object):
             Instruction.OpCode.PUSH_FLOAT: self.__push_float,
             Instruction.OpCode.PUSH_BOOL: noop,
             Instruction.OpCode.PUSH_NULL: noop,
-            Instruction.OpCode.JUMP_IF_FALSE: noop,
+            Instruction.OpCode.JUMP_IF_FALSE: self.__jump_if_false,
             Instruction.OpCode.POP: self.__pop,
-            Instruction.OpCode.CALL_FUNC: noop,
+            Instruction.OpCode.CALL_FUNC: self.__call_func,
             Instruction.OpCode.PUSH_VARIABLE: self.__push_variable,
             Instruction.OpCode.STORE_VARIABLE: self.__store_variable,
             Instruction.OpCode.STOP: self.__stop,

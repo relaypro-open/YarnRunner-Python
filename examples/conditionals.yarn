@@ -1,0 +1,23 @@
+title: Start
+---
+This is a test of conditionals and variables.
+
+<<set $var to 2>>
+
+<<if $var eq 1>>
+    [[var_is_1]]
+<<elseif $var eq 2>>
+    [[var_is_2]]
+<<else>>
+    This is a fallback, and should not run.
+<<endif>>
+
+===
+title: var_is_1
+---
+This node should never be reached.
+===
+title: var_is_2
+---
+This node should be reached.
+===

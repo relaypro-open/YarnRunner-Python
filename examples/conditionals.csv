@@ -1,0 +1,5 @@
+id,text,file,node,lineNumber
+conditionals-Start-0,This is a test of conditionals and variables.,conditionals,Start,3
+conditionals-Start-1,"This is a fallback, and should not run.",conditionals,Start,12
+conditionals-var_is_1-2,This node should never be reached.,conditionals,var_is_1,18
+conditionals-var_is_2-3,This node should be reached.,conditionals,var_is_2,22
