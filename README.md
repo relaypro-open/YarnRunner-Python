@@ -55,7 +55,7 @@ Only a subset of Yarn Spinner opcodes are currently implemented. This will certa
 | OpCode           | Status                                                 |
 | ---------------- | ------------------------------------------------------ |
 | `JUMP_TO`        | ✅&nbsp;&nbsp;Implemented in `runner.__jump_to`        |
-| `JUMP`           | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `JUMP`           | ✅&nbsp;&nbsp;Implemented in `runner.__jump`           |
 | `RUN_LINE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_line`       |
 | `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`    |
 | `ADD_OPTION`     | ✅&nbsp;&nbsp;Implemented in `runner.__add_option`     |

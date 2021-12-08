@@ -126,6 +126,15 @@ class YarnRunner(object):
             instruction.operands[0].string_value)
         print(f"to {self._program_counter}")
 
+    def __jump(self, _instruction):
+        if len(self._vm_data_stack) < 1 or type(self._vm_data_stack[0]) != str:
+            raise Exception(
+                "The JUMP opcode requires a string to be on the top of the stack. A string is not currently present.")
+
+        self._program_counter = self.__find_label(
+            self._vm_data_stack[0]
+        )
+
     def __go_to_node(self, node_key):
         # print(f"Go from {self.current_node} to node {node_key}")
         if node_key not in self._compiled_yarn.nodes.keys():
@@ -244,7 +253,7 @@ class YarnRunner(object):
 
         opcode_functions = {
             Instruction.OpCode.JUMP_TO: self.__jump_to,
-            Instruction.OpCode.JUMP: noop,
+            Instruction.OpCode.JUMP: self.__jump,
             Instruction.OpCode.RUN_LINE: self.__run_line,
             Instruction.OpCode.RUN_COMMAND: self.__run_command,
             Instruction.OpCode.ADD_OPTION: self.__add_option,

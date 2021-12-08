@@ -1,0 +1,9 @@
+id,text,file,node,lineNumber
+shortcuts-Start-0,This is a test of shortcut functionality.,shortcuts,Start,3
+shortcuts-Start-1,Option 1,shortcuts,Start,5
+shortcuts-Start-2,Option 2,shortcuts,Start,7
+shortcuts-Start-3,Option 3,shortcuts,Start,9
+shortcuts-Start-4,Option 4,shortcuts,Start,10
+shortcuts-Start-5,Option 1 selected.,shortcuts,Start,6
+shortcuts-Start-6,Option 2 selected.,shortcuts,Start,8
+shortcuts-Start-7,This is the last line.,shortcuts,Start,12
