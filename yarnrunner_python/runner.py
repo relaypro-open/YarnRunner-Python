@@ -18,6 +18,7 @@ class YarnRunner(object):
         self._vm_data_stack = ["Start"]
         self._vm_instruction_stack = [Instruction(
             opcode=Instruction.OpCode.RUN_NODE)]
+        self._program_counter = 0
         self.paused = True
         self.finished = False
 
@@ -54,6 +55,7 @@ class YarnRunner(object):
         print(self._vm_data_stack)
 
     def debug_vm_instruction_stack(self):
+        print(f"The current program counter is: {self._program_counter}")
         print("The current VM instruction stack is:")
         for (idx, instruction) in enumerate(self._vm_instruction_stack):
             print(f"    {idx}: {Instruction.OpCode.Name(instruction.opcode)}")
@@ -104,10 +106,9 @@ class YarnRunner(object):
 
         self.current_node = node_key
         self.visits[node_key] += 1
-        # FIXME: shouldn't need to overwrite the stack, but STOP opcodes
-        # are generated on jumps for some reason
         self._vm_instruction_stack = (
             self._compiled_yarn.nodes[node_key].instructions)
+        self._program_counter = 0
         self.__process_instruction()
 
     def __run_line(self, instruction):
@@ -160,7 +161,11 @@ class YarnRunner(object):
             raise Exception(
                 "The VM instruction stack is empty. No more instructions can be processed.")
 
-        instruction = self._vm_instruction_stack.pop(0)
+        if self._program_counter > len(self._vm_instruction_stack) - 1:
+            raise Exception(
+                "The program counter has reached the end of the instruction stack without encountering a STOP opcode.")
+
+        instruction = self._vm_instruction_stack[self._program_counter]
 
         def noop(instruction):
             if (len(instruction.operands) > 0):
@@ -188,6 +193,7 @@ class YarnRunner(object):
             Instruction.OpCode.RUN_NODE: self.__run_node,
         }
 
+        self._program_counter += 1
         opcode_functions[instruction.opcode](instruction)
 
         if not self.paused and not self.finished:
