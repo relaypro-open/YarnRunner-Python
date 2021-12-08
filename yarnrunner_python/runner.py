@@ -1,4 +1,5 @@
 import csv
+from warnings import warn
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
 
 
@@ -117,7 +118,7 @@ class YarnRunner(object):
     def __run_command(self, instruction):
         command, *args = instruction.operands[0].string_value.split(" ")
         if command not in self._command_handlers.keys():
-            raise Exception(
+            warn(
                 f"Command '{command}' does not have a registered command handler.")
         else:
             # TODO: maybe do some argument parsing later
