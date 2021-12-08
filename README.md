@@ -52,25 +52,25 @@ A few gotchas to look out for:
 
 Only a subset of Yarn Spinner opcodes are currently implemented. This will certainly change over time. The current status is:
 
-| OpCode           | Status                                               |
-| ---------------- | ---------------------------------------------------- |
-| `JUMP_TO`        | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `JUMP`           | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `RUN_LINE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_line`     |
-| `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`  |
-| `ADD_OPTION`     | ✅&nbsp;&nbsp;Implemented in `runner.__add_option`   |
-| `SHOW_OPTIONS`   | ✅&nbsp;&nbsp;Implemented in `runner.__show_options` |
-| `PUSH_STRING`    | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `PUSH_FLOAT`     | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `PUSH_BOOL`      | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `PUSH_NULL`      | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `JUMP_IF_FALSE`  | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `POP`            | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `CALL_FUNC`      | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `PUSH_VARIABLE`  | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `STORE_VARIABLE` | 🚫&nbsp;&nbsp;Not Implemented                        |
-| `STOP`           | ✅&nbsp;&nbsp;Implemented in `runner.stop`           |
-| `RUN_NODE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_node`     |
+| OpCode           | Status                                                 |
+| ---------------- | ------------------------------------------------------ |
+| `JUMP_TO`        | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `JUMP`           | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `RUN_LINE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_line`       |
+| `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`    |
+| `ADD_OPTION`     | ✅&nbsp;&nbsp;Implemented in `runner.__add_option`     |
+| `SHOW_OPTIONS`   | ✅&nbsp;&nbsp;Implemented in `runner.__show_options`   |
+| `PUSH_STRING`    | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `PUSH_FLOAT`     | ✅&nbsp;&nbsp;Implemented in `runner.__push_float`     |
+| `PUSH_BOOL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `PUSH_NULL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `JUMP_IF_FALSE`  | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `POP`            | ✅&nbsp;&nbsp;Implemented in `runner.__pop`            |
+| `CALL_FUNC`      | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `PUSH_VARIABLE`  | ✅&nbsp;&nbsp;Implemented in `runner.__push_variable`  |
+| `STORE_VARIABLE` | ✅&nbsp;&nbsp;Implemented in `runner.__store_variable` |
+| `STOP`           | ✅&nbsp;&nbsp;Implemented in `runner.__stop`           |
+| `RUN_NODE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_node`       |
 
 ## Development
 

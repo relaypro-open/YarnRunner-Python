@@ -11,6 +11,7 @@ class YarnRunner(object):
         self.__construct_string_lookup_table()
 
         self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
+        self.variables = {}
         self.current_node = None
         self._command_handlers = {}
         self._line_buffer = []
@@ -53,6 +54,11 @@ class YarnRunner(object):
         self.debug_vm_instruction_stack()
         print("The current VM data stack is:")
         print(self._vm_data_stack)
+        self.debug_variables()
+
+    def debug_variables(self):
+        print("The current variables stored are:")
+        print(self.variables)
 
     def debug_vm_instruction_stack(self):
         print(f"The current program counter is: {self._program_counter}")
@@ -138,6 +144,19 @@ class YarnRunner(object):
     def __show_options(self, _instruction):
         self.paused = True
 
+    def __push_float(self, instruction):
+        self._vm_data_stack.insert(0, instruction.operands[0].float_value)
+
+    def __pop(self, _instruction):
+        self._vm_data_stack.pop(0)
+
+    def __push_variable(self, instruction):
+        self._vm_data_stack.insert(
+            0, self.variables[instruction.operands[0].string_value])
+
+    def __store_variable(self, instruction):
+        self.variables[instruction.operands[0].string_value] = self._vm_data_stack[0]
+
     def __stop(self, _instruction):
         self.finished = True
 
@@ -181,14 +200,14 @@ class YarnRunner(object):
             Instruction.OpCode.ADD_OPTION: self.__add_option,
             Instruction.OpCode.SHOW_OPTIONS: self.__show_options,
             Instruction.OpCode.PUSH_STRING: noop,
-            Instruction.OpCode.PUSH_FLOAT: noop,
+            Instruction.OpCode.PUSH_FLOAT: self.__push_float,
             Instruction.OpCode.PUSH_BOOL: noop,
             Instruction.OpCode.PUSH_NULL: noop,
             Instruction.OpCode.JUMP_IF_FALSE: noop,
-            Instruction.OpCode.POP: noop,
+            Instruction.OpCode.POP: self.__pop,
             Instruction.OpCode.CALL_FUNC: noop,
-            Instruction.OpCode.PUSH_VARIABLE: noop,
-            Instruction.OpCode.STORE_VARIABLE: noop,
+            Instruction.OpCode.PUSH_VARIABLE: self.__push_variable,
+            Instruction.OpCode.STORE_VARIABLE: self.__store_variable,
             Instruction.OpCode.STOP: self.__stop,
             Instruction.OpCode.RUN_NODE: self.__run_node,
         }
