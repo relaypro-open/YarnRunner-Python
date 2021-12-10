@@ -1,4 +1,5 @@
 import csv
+import re
 from warnings import warn
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
 from .vm_std_lib import functions as std_lib_functions
@@ -210,8 +211,23 @@ class YarnRunner(object):
         self._vm_data_stack.insert(0, ret)
 
     def __push_variable(self, instruction):
+        variable_name = instruction.operands[0].string_value
+
+        match = re.search(r"\$visits_([a-zA-Z\_0-9]+)", variable_name)
+        if match:
+            node_name = match.group(1)
+            if node_name not in self.visits:
+                visits = 0
+            else:
+                visits = self.visits[node_name]
+            self._vm_data_stack.insert(0, visits)
+            return
+
+        if variable_name not in self.variables:
+            raise Exception(f"Variable {variable_name} has not been set.")
+
         self._vm_data_stack.insert(
-            0, self.variables[instruction.operands[0].string_value])
+            0, self.variables[variable_name])
 
     def __store_variable(self, instruction):
         self.variables[instruction.operands[0].string_value] = self._vm_data_stack[0]

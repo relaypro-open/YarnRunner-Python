@@ -1,0 +1,20 @@
+title: Start
+---
+[[loop]]
+===
+title: loop
+---
+
+This is the loop node.
+
+<<if $visits_loop > 3>>
+[[end]]
+<<endif>>
+
+[[loop]]
+===
+title: end
+---
+
+This is the end.
+===
