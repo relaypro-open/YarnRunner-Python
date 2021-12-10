@@ -6,11 +6,12 @@ from .vm_std_lib import functions as std_lib_functions
 
 
 class YarnRunner(object):
-    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True) -> None:
+    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False) -> None:
         self._compiled_yarn = YarnProgram()
         self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
         self._names_csv = csv.DictReader(names_csv_f)
         self.__construct_string_lookup_table()
+        self._enable_tracing = enable_tracing
 
         self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
         self.variables = {}
@@ -57,6 +58,10 @@ class YarnRunner(object):
         else:
             raise Exception(
                 f"The current node `{self.current_node}` does not have a label named `{label_key}")
+
+    def __debug_log(self, msg, **kwargs):
+        if self._enable_tracing:
+            print(msg, **kwargs)
 
     def debug_vm(self):
         print(f"VM paused: {self.paused}")
@@ -122,10 +127,11 @@ class YarnRunner(object):
     ##### OpCode Implementations below here #####
 
     def __jump_to(self, instruction):
-        # print(f"Jump from {self._program_counter} ", end='')
+        self.__debug_log(
+            f"__jump_to: Jump from {self._program_counter} ", end='')
         self._program_counter = self.__find_label(
             instruction.operands[0].string_value)
-        # print(f"to {self._program_counter}")
+        self.__debug_log(f"to {self._program_counter}")
 
     def __jump(self, _instruction):
         if len(self._vm_data_stack) < 1 or type(self._vm_data_stack[0]) != str:
@@ -144,6 +150,8 @@ class YarnRunner(object):
 
         self.current_node = node_key
         self.visits[node_key] += 1
+        self.__debug_log(
+            f"__go_to_node: visits[{node_key}] = {self.visits[node_key]}")
         self._vm_instruction_stack = (
             self._compiled_yarn.nodes[node_key].instructions)
         self._program_counter = 0
@@ -216,10 +224,13 @@ class YarnRunner(object):
         match = re.search(r"\$visits_([a-zA-Z\_0-9]+)", variable_name)
         if match:
             node_name = match.group(1)
-            if node_name not in self.visits:
+            visits_lookup = {node_key.replace(".", "_"): v for (
+                node_key, v) in self.visits.items()}
+
+            if node_name not in visits_lookup:
                 visits = 0
             else:
-                visits = self.visits[node_name]
+                visits = visits_lookup[node_name]
             self._vm_data_stack.insert(0, visits)
             return
 
