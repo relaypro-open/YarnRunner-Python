@@ -59,6 +59,12 @@ class YarnRunner(object):
             raise Exception(
                 f"The current node `{self.current_node}` does not have a label named `{label_key}")
 
+    def __find_expressions(self, operand):
+        # TODO: implement this functionality
+        if int(operand.float_value) != 0:
+            raise Exception(
+                f"Yarn stories with interpolated inline expressions are not yet supported.")
+
     def __debug_log(self, msg, **kwargs):
         if self._enable_tracing:
             print(msg, **kwargs)
@@ -160,20 +166,42 @@ class YarnRunner(object):
     def __run_line(self, instruction):
         string_key = instruction.operands[0].string_value
 
+        # if this instruction has a second operand, it's the number of expressions
+        # on the line that need to be evaluated.
+        if len(instruction.operands) > 1:
+            line_substitutions = self.__find_expressions(
+                instruction.operands[1])
+            # TODO: implement substitutions
+
         self._line_buffer.append(self.__lookup_string(string_key))
 
     def __run_command(self, instruction):
         command, *args = instruction.operands[0].string_value.split(" ")
+
         if command not in self._command_handlers.keys():
             warn(
                 f"Command '{command}' does not have a registered command handler.")
         else:
-            # TODO: maybe do some argument parsing later
+            # if this instruction has a second operand, it's the number of expressions
+            # on the line that need to be evaluated.
+            if len(instruction.operands) > 1:
+                line_substitutions = self.__find_expressions(
+                    instruction.operands[1])
+                # TODO: implement substitutions
+
+            # TODO: maybe do some argument type parsing later
             self._command_handlers[command](*args)
 
     def __add_option(self, instruction):
         title_string_key = instruction.operands[0].string_value
         choice_path = instruction.operands[1].string_value
+
+        # if this instruction has a second operand, it's the number of expressions
+        # on the line that need to be evaluated.
+        if len(instruction.operands) > 2:
+            line_substitutions = self.__find_expressions(
+                instruction.operands[2])
+            # TODO: implement substitutions
 
         self._option_buffer.append({
             'index': len(self._option_buffer),
@@ -281,12 +309,6 @@ class YarnRunner(object):
 
         instruction = self._vm_instruction_stack[self._program_counter]
 
-        def noop(instruction):
-            if (len(instruction.operands) > 0):
-                print(instruction.operands)
-            raise Exception(
-                f"OpCode {Instruction.OpCode.Name(instruction.opcode)} is not yet implemented")
-
         opcode_functions = {
             Instruction.OpCode.JUMP_TO: self.__jump_to,
             Instruction.OpCode.JUMP: self.__jump,
@@ -308,6 +330,13 @@ class YarnRunner(object):
         }
 
         self._program_counter += 1
+
+        if instruction.opcode not in opcode_functions:
+            if (len(instruction.operands) > 0):
+                print(instruction.operands)
+            raise Exception(
+                f"OpCode {Instruction.OpCode.Name(instruction.opcode)} is not yet implemented")
+
         opcode_functions[instruction.opcode](instruction)
 
         if not self.paused and not self.finished:

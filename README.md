@@ -50,27 +50,10 @@ A few gotchas to look out for:
 - Make sure to open the compiled story file as a binary file (see the above example, use `open(filename, 'rb')`) in order for it to be properly parsed by the compiled protobuf library.
 - Unless you pass `autostart=False` to the runner when creating it, it will automatically start and run to the next choice point.
 
-All Yarn Spinner opcodes are currently implemented. This may certainly change over time, if new opcodes are added to the language. The current status is:
+As of version 2.0, all Yarn Spinner opcodes are currently implemented, as well as Yarn's internal standard library of functions and operators. This may certainly change over time, if new opcodes, functions, or operators are added to the language. The current missing features are:
 
-| OpCode           | Status                                                 |
-| ---------------- | ------------------------------------------------------ |
-| `JUMP_TO`        | ✅&nbsp;&nbsp;Implemented in `runner.__jump_to`        |
-| `JUMP`           | ✅&nbsp;&nbsp;Implemented in `runner.__jump`           |
-| `RUN_LINE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_line`       |
-| `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`    |
-| `ADD_OPTION`     | ✅&nbsp;&nbsp;Implemented in `runner.__add_option`     |
-| `SHOW_OPTIONS`   | ✅&nbsp;&nbsp;Implemented in `runner.__show_options`   |
-| `PUSH_STRING`    | ✅&nbsp;&nbsp;Implemented in `runner.__push_string`    |
-| `PUSH_FLOAT`     | ✅&nbsp;&nbsp;Implemented in `runner.__push_float`     |
-| `PUSH_BOOL`      | ✅&nbsp;&nbsp;Implemented in `runner.__push_bool`      |
-| `PUSH_NULL`      | ✅&nbsp;&nbsp;Implemented in `runner.__push_null`      |
-| `JUMP_IF_FALSE`  | ✅&nbsp;&nbsp;Implemented in `runner.__jump_if_false`  |
-| `POP`            | ✅&nbsp;&nbsp;Implemented in `runner.__pop`            |
-| `CALL_FUNC`      | ✅&nbsp;&nbsp;Implemented in `runner.__call_func`      |
-| `PUSH_VARIABLE`  | ✅&nbsp;&nbsp;Implemented in `runner.__push_variable`  |
-| `STORE_VARIABLE` | ✅&nbsp;&nbsp;Implemented in `runner.__store_variable` |
-| `STOP`           | ✅&nbsp;&nbsp;Implemented in `runner.__stop`           |
-| `RUN_NODE`       | ✅&nbsp;&nbsp;Implemented in `runner.__run_node`       |
+- Inline expressions [(see Yarn docs)](https://yarnspinner.dev/docs/writing/expressions-and-variables/#inline-expressions)
+- Localisation tags and Format functions [(see Yarn syntax reference)](https://yarnspinner.dev/docs/syntax/#localisation-tags)
 
 ## Development
 
