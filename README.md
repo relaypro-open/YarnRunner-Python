@@ -50,7 +50,7 @@ A few gotchas to look out for:
 - Make sure to open the compiled story file as a binary file (see the above example, use `open(filename, 'rb')`) in order for it to be properly parsed by the compiled protobuf library.
 - Unless you pass `autostart=False` to the runner when creating it, it will automatically start and run to the next choice point.
 
-Only a subset of Yarn Spinner opcodes are currently implemented. This will certainly change over time. The current status is:
+All Yarn Spinner opcodes are currently implemented. This may certainly change over time, if new opcodes are added to the language. The current status is:
 
 | OpCode           | Status                                                 |
 | ---------------- | ------------------------------------------------------ |
@@ -60,10 +60,10 @@ Only a subset of Yarn Spinner opcodes are currently implemented. This will certa
 | `RUN_COMMAND`    | ✅&nbsp;&nbsp;Implemented in `runner.__run_command`    |
 | `ADD_OPTION`     | ✅&nbsp;&nbsp;Implemented in `runner.__add_option`     |
 | `SHOW_OPTIONS`   | ✅&nbsp;&nbsp;Implemented in `runner.__show_options`   |
-| `PUSH_STRING`    | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `PUSH_STRING`    | ✅&nbsp;&nbsp;Implemented in `runner.__push_string`    |
 | `PUSH_FLOAT`     | ✅&nbsp;&nbsp;Implemented in `runner.__push_float`     |
-| `PUSH_BOOL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
-| `PUSH_NULL`      | 🚫&nbsp;&nbsp;Not Implemented                          |
+| `PUSH_BOOL`      | ✅&nbsp;&nbsp;Implemented in `runner.__push_bool`      |
+| `PUSH_NULL`      | ✅&nbsp;&nbsp;Implemented in `runner.__push_null`      |
 | `JUMP_IF_FALSE`  | ✅&nbsp;&nbsp;Implemented in `runner.__jump_if_false`  |
 | `POP`            | ✅&nbsp;&nbsp;Implemented in `runner.__pop`            |
 | `CALL_FUNC`      | ✅&nbsp;&nbsp;Implemented in `runner.__call_func`      |

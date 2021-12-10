@@ -1,0 +1,7 @@
+title: Start
+---
+<<set $value_string to "string">>
+<<set $value_float to 1.25>>
+<<set $value_bool to true>>
+<<set $value_null to null>>
+===

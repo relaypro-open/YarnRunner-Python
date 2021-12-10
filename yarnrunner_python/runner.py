@@ -184,8 +184,17 @@ class YarnRunner(object):
     def __show_options(self, _instruction):
         self.paused = True
 
+    def __push_string(self, instruction):
+        self._vm_data_stack.insert(0, instruction.operands[0].string_value)
+
     def __push_float(self, instruction):
         self._vm_data_stack.insert(0, instruction.operands[0].float_value)
+
+    def __push_bool(self, instruction):
+        self._vm_data_stack.insert(0, instruction.operands[0].bool_value)
+
+    def __push_null(self, _instruction):
+        self._vm_data_stack.insert(0, None)
 
     def __jump_if_false(self, instruction):
         if self._vm_data_stack[0] == False:
@@ -285,10 +294,10 @@ class YarnRunner(object):
             Instruction.OpCode.RUN_COMMAND: self.__run_command,
             Instruction.OpCode.ADD_OPTION: self.__add_option,
             Instruction.OpCode.SHOW_OPTIONS: self.__show_options,
-            Instruction.OpCode.PUSH_STRING: noop,
+            Instruction.OpCode.PUSH_STRING: self.__push_string,
             Instruction.OpCode.PUSH_FLOAT: self.__push_float,
-            Instruction.OpCode.PUSH_BOOL: noop,
-            Instruction.OpCode.PUSH_NULL: noop,
+            Instruction.OpCode.PUSH_BOOL: self.__push_bool,
+            Instruction.OpCode.PUSH_NULL: self.__push_null,
             Instruction.OpCode.JUMP_IF_FALSE: self.__jump_if_false,
             Instruction.OpCode.POP: self.__pop,
             Instruction.OpCode.CALL_FUNC: self.__call_func,
