@@ -125,7 +125,7 @@ class YarnRunner(object):
         # print(f"Jump from {self._program_counter} ", end='')
         self._program_counter = self.__find_label(
             instruction.operands[0].string_value)
-        print(f"to {self._program_counter}")
+        # print(f"to {self._program_counter}")
 
     def __jump(self, _instruction):
         if len(self._vm_data_stack) < 1 or type(self._vm_data_stack[0]) != str:
