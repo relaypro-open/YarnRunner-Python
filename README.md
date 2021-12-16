@@ -2,6 +2,14 @@
 
 An **unofficial** Python interpreter for compiled [Yarn Spinner](https://yarnspinner.dev/) programs. _Documentation incomplete._
 
+## Installation
+
+Right now, the library can be installed directly from source or from [our Releases page](https://github.com/relaypro-open/YarnRunner-Python/releases). We plan to publish the library on PyPi in the near future.
+
+```
+pip install git+https://github.com/relaypro-open/YarnRunner-Python@v0.0.2#egg=yarnrunner_python
+```
+
 #### Using the library
 
 Here's an example illustrating how to use the library:
@@ -78,3 +86,7 @@ The source code of the examples are located inside `*.yarn` files. `*.csv` and `
    - This will output `*.csv` and `*.yarnc` files in the current directory, overwriting any files already present with the same name.
 
 Currently `*.csv` and `*.yarnc` files are committed to version control to make it easier to run our test suite. They will likely be gitignored later once we have a better build process for these files.
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE`.
