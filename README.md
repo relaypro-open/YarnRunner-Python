@@ -2,6 +2,8 @@
 
 An **unofficial** Python interpreter for compiled [Yarn Spinner](https://yarnspinner.dev/) programs. _Documentation incomplete._
 
+This library currently supports the compiled story format from Yarn Spinner 1.0. Yarn Spinner 2.0 support is planned, but not currently in place.
+
 ## Installation
 
 Right now, the library can be installed directly from source or from [our Releases page](https://github.com/relaypro-open/YarnRunner-Python/releases). We plan to publish the library on PyPi in the near future.
