@@ -2,7 +2,7 @@
 
 An **unofficial** Python interpreter for compiled [Yarn Spinner](https://yarnspinner.dev/) programs. _Documentation incomplete._
 
-This library currently supports the compiled story format from Yarn Spinner 1.0. Yarn Spinner 2.0 support is in progress.
+This library currently supports the compiled story format from Yarn Spinner 1.0. The library has also been tested with basic Yarn Spinner 2.0 code, but lacks the implementation for some of 2.0's new features.
 
 ## Installation
 
@@ -60,11 +60,14 @@ A few gotchas to look out for:
 - Make sure to open the compiled story file as a binary file (see the above example, use `open(filename, 'rb')`) in order for it to be properly parsed by the compiled protobuf library.
 - Unless you pass `autostart=False` to the runner when creating it, it will automatically start and run to the next choice point.
 
-As of version v0.0.2, all Yarn Spinner 1 opcodes are currently implemented, as well as Yarn Spinner 1's internal standard library of functions and operators. This may certainly change over time, if new opcodes, functions, or operators are added to the language. The current missing features are:
+As of version v0.0.2, all Yarn Spinner opcodes are currently implemented, as well as Yarn Spinner 1's internal standard library of functions and operators. As of version v0.2.1, typed versions of these functions (introduced in Yarn Spinner 2) are present, but full YS2 parity has not been verified at this time. The known features currently missing are:
 
-- Inline expressions [(see Yarn docs)](https://yarnspinner.dev/docs/writing/expressions-and-variables/#inline-expressions)
-- Localisation tags and Format functions [(see Yarn syntax reference)](https://yarnspinner.dev/docs/syntax/#localisation-tags)
-- Full Yarn Spinner 2.0 functionality
+- Inline expressions [(see Yarn docs on "Using Variables in Lines")](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/logic-and-variables#using-variables-in-lines)
+- Line conditions and the `IsAvailable` flag on options [(see Yarn Docs on "Conditional Options")](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/flow-control#conditional-options)
+- Localisation and Line IDs [(see Yarn's Localization docs)](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/assets-and-localization)
+- An appropriate replacement for the distinction Yarn makes between Functions and Coroutines in Unity (to allow users to register blocking command handlers via this Python runner independent of Unity)
+- Complete implementation of YS2's type system, specifically when performing operations on mismatching types
+  - This may be challenging, due to Python being a dynamically typed language
 
 ## Development
 
