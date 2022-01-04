@@ -1,0 +1,5 @@
+id,text,file,node,lineNumber
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn-Start-0,This is a test of the jump functionality.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn,Start,3
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn-Start-1,Begin Jump,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn,Start,5
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn-begin_jump-2,Some text is output.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn,begin_jump,11
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn-jump_complete-3,The jump is now complete.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/jump.yarn,jump_complete,22
