@@ -2,9 +2,9 @@ import os
 from .context import YarnRunner
 
 compiled_yarn_f = open(os.path.join(os.path.dirname(
-    __file__), '../examples/shortcuts.yarnc'), 'rb')
+    __file__), '../examples/yarn1/shortcuts.yarnc'), 'rb')
 names_csv_f = open(os.path.join(os.path.dirname(
-    __file__), '../examples/shortcuts.csv'), 'r')
+    __file__), '../examples/yarn1/shortcuts.csv'), 'r')
 
 runner = YarnRunner(compiled_yarn_f, names_csv_f)
 

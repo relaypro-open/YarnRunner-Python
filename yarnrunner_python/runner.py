@@ -176,7 +176,8 @@ class YarnRunner(object):
         self._line_buffer.append(self.__lookup_string(string_key))
 
     def __run_command(self, instruction):
-        command, *args = instruction.operands[0].string_value.split(" ")
+        command, * \
+            args = instruction.operands[0].string_value.strip().split(" ")
 
         if command not in self._command_handlers.keys():
             warn(

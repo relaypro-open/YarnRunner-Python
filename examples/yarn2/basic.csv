@@ -1,0 +1,5 @@
+id,text,file,node,lineNumber
+line:/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn-Start-0,This is the first node.,/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn,Start,3
+line:/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn-Start-1,Choice 1,/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn,Start,5
+line:/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn-Start-2,Choice 2,/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn,Start,7
+line:/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn-choice_1-3,"Here is the node visited as a **result** of the __first__ ""choice"", with a comma.",/Users/sweaver/Git/YarnRunner-Python/examples/basic.yarn,choice_1,13

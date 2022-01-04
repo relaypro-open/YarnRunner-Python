@@ -2,7 +2,7 @@
 
 An **unofficial** Python interpreter for compiled [Yarn Spinner](https://yarnspinner.dev/) programs. _Documentation incomplete._
 
-This library currently supports the compiled story format from Yarn Spinner 1.0. Yarn Spinner 2.0 support is planned, but not currently in place.
+This library currently supports the compiled story format from Yarn Spinner 1.0. Yarn Spinner 2.0 support is in progress.
 
 ## Installation
 
@@ -60,10 +60,11 @@ A few gotchas to look out for:
 - Make sure to open the compiled story file as a binary file (see the above example, use `open(filename, 'rb')`) in order for it to be properly parsed by the compiled protobuf library.
 - Unless you pass `autostart=False` to the runner when creating it, it will automatically start and run to the next choice point.
 
-As of version 2.0, all Yarn Spinner opcodes are currently implemented, as well as Yarn's internal standard library of functions and operators. This may certainly change over time, if new opcodes, functions, or operators are added to the language. The current missing features are:
+As of version v0.0.2, all Yarn Spinner 1 opcodes are currently implemented, as well as Yarn Spinner 1's internal standard library of functions and operators. This may certainly change over time, if new opcodes, functions, or operators are added to the language. The current missing features are:
 
 - Inline expressions [(see Yarn docs)](https://yarnspinner.dev/docs/writing/expressions-and-variables/#inline-expressions)
 - Localisation tags and Format functions [(see Yarn syntax reference)](https://yarnspinner.dev/docs/syntax/#localisation-tags)
+- Full Yarn Spinner 2.0 functionality
 
 ## Development
 
@@ -83,9 +84,44 @@ To make a release:
 
 The source code of the examples are located inside `*.yarn` files. `*.csv` and `*.yarnc` files are generated via the Yarn Spinner compiler. To compile these files, follow the below steps:
 
-1. Install the [Yarn Spinner Console](https://github.com/YarnSpinnerTool/YarnSpinner-Console) program `ysc`. Basic binaries are available on [their releases page](https://github.com/YarnSpinnerTool/YarnSpinner-Console/releases).
-2. From the `examples/` directory, run `ysc compile [filename].yarn`. For example, to compile the basic example used in `tests/test_basic.py`, use `ysc compile basic.yarn`.
+<details><summary>Yarn Spinner 1</summary>
+
+1. Install the version v0.0.1 of the [Yarn Spinner Console](https://github.com/YarnSpinnerTool/YarnSpinner-Console) program `ysc`. Basic binaries are available on [their releases page](https://github.com/YarnSpinnerTool/YarnSpinner-Console/releases/tag/v0.0.1).
+2. From the `examples/yarn1/` directory, compile the examples. For each example, run:
+
+   ```
+   ysc compile [filename].yarn
+   ```
+
+   - For example, to compile the basic example used in `tests/test_basic.py`, use:
+
+   ```
+   ysc compile basic.yarn
+   ```
+
    - This will output `*.csv` and `*.yarnc` files in the current directory, overwriting any files already present with the same name.
+
+</details>
+<details open><summary>Yarn Spinner 2</summary>
+
+1. Install the latest version of the [Yarn Spinner Console](https://github.com/YarnSpinnerTool/YarnSpinner-Console) program `ysc`. Basic binaries are available on [their releases page](https://github.com/YarnSpinnerTool/YarnSpinner-Console/releases).
+2. From the `examples/yarn2/` directory, compile the examples. For each example, run:
+
+   ```
+   ysc compile [filename].yarn -n [filename].yarnc -t [filename].csv
+   ```
+
+   - For example, to compile the basic example used in `tests/test_basic.py`, use:
+
+   ```
+   ysc compile basic.yarn -n basic.yarnc -t basic.csv
+   ```
+
+   - This will output `*.csv` and `*.yarnc` files in the current directory, overwriting any files already present with the same name.
+
+(The long form with multiple CLI arguments used to compile these files is less than ideal. See [YarnSpinnerTool/YarnSpinner-Console#8](https://github.com/YarnSpinnerTool/YarnSpinner-Console/issues/8).)
+
+</details>
 
 Currently `*.csv` and `*.yarnc` files are committed to version control to make it easier to run our test suite. They will likely be gitignored later once we have a better build process for these files.
 
