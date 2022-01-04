@@ -1,0 +1,6 @@
+title: Start
+---
+<<set $name to "Sam">>
+
+Hello there {$name}.
+===
