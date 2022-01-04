@@ -1,0 +1,5 @@
+id,text,file,node,lineNumber
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn-Start-0,This is a test of conditionals and variables.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn,Start,3
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn-Start-1,"This is a fallback, and should not run.",/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn,Start,12
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn-var_is_1-2,This node should never be reached.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn,var_is_1,18
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn-var_is_2-3,This node should be reached.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/conditionals.yarn,var_is_2,22

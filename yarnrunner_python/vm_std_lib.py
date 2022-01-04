@@ -16,3 +16,31 @@ functions = {
     'Xor': (2, lambda p: p[0] ^ p[1]),
     'Not': (1, lambda p: not p[0])
 }
+
+typeMethods = {
+    'Boolean': ['EqualTo',
+                'NotEqualTo',
+                'And',
+                'Or',
+                'Xor',
+                'Not'],
+    'Number': ['EqualTo',
+               'NotEqualTo',
+               'Add',
+               'Minus',
+               'Divide',
+               'Multiply',
+               'Modulo',
+               'UnaryMinus',
+               'GreaterThan',
+               'GreaterThanOrEqualTo',
+               'LessThan',
+               'LessThanOrEqualTo'],
+    'String': ['EqualTo',
+               'NotEqualTo',
+               'Add']
+}
+
+for type, methods in typeMethods.items():
+    for method in methods:
+        functions[f'{type}.{method}'] = functions[method]
