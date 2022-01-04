@@ -16,3 +16,5 @@ def test_variables():
     assert runner.variables["$value_float"] == 1.25
     assert runner.variables["$value_bool"] == True
     assert runner.variables["$value_null"] is None
+
+# TODO, the variables.yarnc wouldn't compile under YSC 2.0.1-a2eff4c

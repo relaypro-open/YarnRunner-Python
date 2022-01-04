@@ -1,0 +1,3 @@
+id,text,file,node,lineNumber
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/visits.yarn-loop-0,This is the loop node.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/visits.yarn,loop,8
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/visits.yarn-end-1,This is the end.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/visits.yarn,end,19
