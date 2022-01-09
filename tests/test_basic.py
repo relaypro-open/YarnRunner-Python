@@ -1,10 +1,10 @@
 import os
 from .context import YarnRunner
 
-compiled_yarn_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/basic.yarnc'), 'rb')
-names_csv_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/basic.csv'), 'r')
+compiled_yarn_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/basic.yarnc")
+compiled_yarn_f1 = open(compiled_yarn_fname1, "rb")
+names_csv_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/basic.csv")
+names_csv_f1 = open(names_csv_fname1, "r")
 compiled_yarn_f2 = open(os.path.join(os.path.dirname(
     __file__), '../examples/yarn2/basic.yarnc'), 'rb')
 names_csv_f2 = open(os.path.join(os.path.dirname(
@@ -82,3 +82,33 @@ def test_start_node_choose2():
 
     # ensure the command has run
     assert side_effect2 == "event:/event/event_name"
+
+
+def test_repr():
+    """Testing optional parameters of constructor and repr()"""
+
+    "YarnRunner(open(\"examples/yarn1/basic.yarnc\", \"rb\"), open(\"examples/yarn1/basic.csv\"), autostart=True, visits={\\'choice_1\\': 0, \\'Start\\': 1}, current_node=\\'Start\\')"
+
+    result = repr(runner1)
+
+    assert result.startswith(
+        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
+    )
+
+    assert ("""'Start': 1""" in result) and ("""'choice_1': 1""" in result)
+    assert """current_node='choice_1'""" in result
+    assert """command_handlers={'runACommand':""" in result
+
+    """YarnRunner(open("examples/yarn1/basic.yarnc", "rb"), open("examples/yarn1/basic.csv"), autostart=True, visits={'Start': 1, 'choice_1': 0}, current_node='Start')"""
+
+    result = repr(
+        YarnRunner(
+            compiled_yarn_f1,
+            names_csv_f1,
+            autostart=False,
+        )
+    )
+
+    # assert ("'Start': 0" in result) and ("'choice_1': 0" in result)
+
+    assert result == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False)"""

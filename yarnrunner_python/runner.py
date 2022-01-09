@@ -1,33 +1,90 @@
+from typing import Any, Dict, List, Optional, Union
+
 import csv
 import re
 from warnings import warn
-from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
+from .yarn_spinner_pb2 import Program as YarnProgram, Instruction  # type: ignore
 from .vm_std_lib import functions as std_lib_functions
 
 
 class YarnRunner(object):
-    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False) -> None:
+    def __init__(
+        self,
+        compiled_yarn_f,
+        names_csv_f,
+        autostart=True,
+        enable_tracing=False,
+        visits: Optional[Dict[str, int]] = None,
+        variables: Dict[str, Any] = None,
+        current_node: str = None,
+        command_handlers: Dict[str, Any] = None,
+        line_buffer: List[str] = None,
+        option_buffer: List[Dict[str, Union[int, str]]] = None,
+        vm_data_stack: Optional[List[Union[str, float, bool, None]]] = None,
+        vm_instruction_stack: Optional[
+            List[Instruction]
+        ] = None,  # TODO: what is the correct type here?
+        program_counter: int = 0,
+    ) -> None:
         self._compiled_yarn = YarnProgram()
+        self._compiled_yarn_f = compiled_yarn_f  # not ideal to store entire input file, but would need to refactor method signature otherwise
         self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
         self._names_csv = csv.DictReader(names_csv_f)
         self.__construct_string_lookup_table()
         self._enable_tracing = enable_tracing
 
-        self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
-        self.variables = {}
-        self.current_node = None
-        self._command_handlers = {}
-        self._line_buffer = []
-        self._option_buffer = []
-        self._vm_data_stack = ["Start"]
-        self._vm_instruction_stack = [Instruction(
-            opcode=Instruction.OpCode.RUN_NODE)]
-        self._program_counter = 0
+        self.visits = (
+            visits if visits else {key: 0 for key in self._compiled_yarn.nodes.keys()}
+        )
+        self.variables = variables if variables else {}
+        self.current_node = current_node
+        self._command_handlers = command_handlers if command_handlers else {}
+        self._line_buffer = line_buffer if line_buffer else []
+        self._option_buffer = option_buffer if option_buffer else []
+        self._vm_data_stack = vm_data_stack if vm_data_stack else ["Start"]
+        self._vm_instruction_stack = (
+            vm_instruction_stack
+            if vm_instruction_stack
+            else [Instruction(opcode=Instruction.OpCode.RUN_NODE)]
+        )
+        self._program_counter = program_counter
         self.paused = True
-        self.finished = False
+        self.finished = (
+            len(self._vm_instruction_stack) != 0
+            and self._vm_instruction_stack[-1].opcode == Instruction.OpCode.STOP
+        )
 
+        self._autostart = autostart
         if autostart:
             self.resume()
+
+    def __repr__(self):
+        params = [
+            "enable_tracing",
+            "visits",
+            "variables",
+            "current_node",
+            "command_handlers",
+            "line_buffer",
+            "option_buffer",
+        ]
+        pairs = {
+            k: repr(self.__getattribute__(k))
+            for k in params
+            if k in self.__dict__ and self.__getattribute__(k)
+        }
+        pairs.update(
+            {
+                k: repr(self.__getattribute__(f"_{k}"))
+                for k in params
+                if f"_{k}" in self.__dict__ and self.__getattribute__(f"_{k}")
+            }
+        )
+        args = ", ".join(f"{k}={v}" for k, v in pairs.items())
+        return (
+            f"""YarnRunner(open("{self._compiled_yarn_f.name}", "rb"), open("{self._compiled_yarn_f.name.replace(".yarnc", ".csv")}"), autostart={self._autostart}"""
+            + f"""{", " + args if args else ""})"""
+        )
 
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
@@ -44,7 +101,7 @@ class YarnRunner(object):
         self.paused = False
         self.__process_instruction()
 
-    def __lookup_string(self, string_key):
+    def __lookup_string(self, string_key) -> str:
         if string_key not in self.string_lookup_table:
             raise Exception(
                 f"{string_key} is not a key in the string lookup table.")
@@ -193,7 +250,7 @@ class YarnRunner(object):
             # TODO: maybe do some argument type parsing later
             self._command_handlers[command](*args)
 
-    def __add_option(self, instruction):
+    def __add_option(self, instruction) -> None:
         title_string_key = instruction.operands[0].string_value
         choice_path = instruction.operands[1].string_value
 
