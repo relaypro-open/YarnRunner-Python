@@ -1,14 +1,12 @@
 import os
 from .context import YarnRunner
 
-compiled_yarn_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/expressions.yarnc'), 'rb')
-names_csv_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/expressions.csv'), 'r')
-compiled_yarn_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/expressions.yarnc'), 'rb')
-names_csv_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/expressions.csv'), 'r')
+compiled_yarn_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/expressions.yarnc")
+compiled_yarn_f1 = open(compiled_yarn_fname1, "rb")
+names_csv_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/expressions.csv")
+names_csv_f1 = open(names_csv_fname1, "r")
+compiled_yarn_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/expressions.yarnc"), "rb")
+names_csv_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/expressions.csv"), "r")
 
 runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1, autostart=False)
 runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2, autostart=False)
@@ -38,3 +36,10 @@ def test_expressions2():
     except Exception as e:
         assert str(
             e) == "Yarn stories with interpolated inline expressions are not yet supported."
+
+
+def test_repr():
+    assert (
+        repr(runner1)
+        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'Start': 1}}, variables={{'$name': 'Sam'}}, current_node='Start')"""
+    )

@@ -84,31 +84,34 @@ def test_start_node_choose2():
     assert side_effect2 == "event:/event/event_name"
 
 
-def test_repr():
-    """Testing optional parameters of constructor and repr()"""
-
-    "YarnRunner(open(\"examples/yarn1/basic.yarnc\", \"rb\"), open(\"examples/yarn1/basic.csv\"), autostart=True, visits={\\'choice_1\\': 0, \\'Start\\': 1}, current_node=\\'Start\\')"
-
+def test_init_repr():
     result = repr(runner1)
 
     assert result.startswith(
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
     )
 
-    assert ("""'Start': 1""" in result) and ("""'choice_1': 1""" in result)
-    assert """current_node='choice_1'""" in result
-    assert """command_handlers={'runACommand':""" in result
+    for v in ["'Start': 1", "'choice_1': 1"]:
+        assert v in result
 
-    """YarnRunner(open("examples/yarn1/basic.yarnc", "rb"), open("examples/yarn1/basic.csv"), autostart=True, visits={'Start': 1, 'choice_1': 0}, current_node='Start')"""
+    assert "current_node='choice_1'" in result
+    assert "command_handlers={'runACommand':" in result
 
     result = repr(
         YarnRunner(
             compiled_yarn_f1,
             names_csv_f1,
             autostart=False,
+            current_node="choice_1",
+            visits={"Start": 1, "choice_1": 3},
         )
     )
 
-    # assert ("'Start': 0" in result) and ("'choice_1': 0" in result)
+    assert result.startswith(
+        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
+    )
 
-    assert result == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False)"""
+    for v in ["'Start': 1", "'choice_1': 3"]:
+        assert v in result
+
+    assert "current_node='choice_1'" in result

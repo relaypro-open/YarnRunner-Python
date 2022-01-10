@@ -1,14 +1,12 @@
 import os
 from .context import YarnRunner
 
-compiled_yarn_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/shortcuts.yarnc'), 'rb')
-names_csv_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/shortcuts.csv'), 'r')
-compiled_yarn_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/shortcuts.yarnc'), 'rb')
-names_csv_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/shortcuts.csv'), 'r')
+compiled_yarn_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/shortcuts.yarnc")
+compiled_yarn_f1 = open(compiled_yarn_fname1, "rb")
+names_csv_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/shortcuts.csv")
+names_csv_f1 = open(names_csv_fname1, "r")
+compiled_yarn_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/shortcuts.yarnc"), "rb")
+names_csv_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/shortcuts.csv"), "r")
 
 runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1)
 runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2)
@@ -66,3 +64,18 @@ def test_shortcuts():
     assert not runner2.has_line()
     assert runner2.finished
     assert runner2.current_node == 'Start'
+
+
+def test_init_repr():
+    assert (
+        repr(runner1)
+        == """YarnRunner(open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.yarnc", "rb"), open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.csv"), autostart=True, visits={'Start': 1}, current_node='Start')"""
+    )
+
+    result = repr(
+        YarnRunner(compiled_yarn_f1, names_csv_f1, autostart=False, visits={"Start": 5})
+    )
+    assert (
+        result
+        == """YarnRunner(open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.yarnc", "rb"), open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.csv"), autostart=False, visits={'Start': 5})"""
+    )

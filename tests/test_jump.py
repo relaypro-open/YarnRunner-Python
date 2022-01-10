@@ -1,14 +1,12 @@
 import os
 from .context import YarnRunner
 
-compiled_yarn_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/jump.yarnc'), 'rb')
-names_csv_f1 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn1/jump.csv'), 'r')
-compiled_yarn_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/jump.yarnc'), 'rb')
-names_csv_f2 = open(os.path.join(os.path.dirname(
-    __file__), '../examples/yarn2/jump.csv'), 'r')
+compiled_yarn_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/jump.yarnc")
+compiled_yarn_f1 = open(compiled_yarn_fname1, "rb")
+names_csv_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/jump.csv")
+names_csv_f1 = open(names_csv_fname1, "r")
+compiled_yarn_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/jump.yarnc"), "rb")
+names_csv_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/jump.csv"), "r")
 
 runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1)
 runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2)
@@ -61,3 +59,45 @@ def test_jumps2():
     assert not runner2.has_line()
     assert runner2.finished
     assert runner2.current_node == 'jump_complete'
+
+
+def test_init_repr():
+    result = repr(runner1)
+
+    assert result.startswith(
+        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
+    )
+
+    for v in [
+        "'Start': 1",
+        "'begin_jump': 1",
+        "'jump_stage_2': 1",
+        "'jump_complete': 1",
+    ]:
+        assert v in result
+
+    assert result.endswith("""}, current_node='jump_complete')""")
+
+    result = repr(
+        YarnRunner(
+            compiled_yarn_f1,
+            names_csv_f1,
+            autostart=False,
+            current_node="jump_stage_2",
+            visits={"Start": 1, "begin_jump": 1, "jump_stage_2": 1, "jump_complete": 0},
+        )
+    )
+
+    assert result.startswith(
+        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
+    )
+
+    for v in [
+        "'Start': 1",
+        "'begin_jump': 1",
+        "'jump_stage_2': 1",
+        "'jump_complete': 0",
+    ]:
+        assert v in result
+
+    assert "current_node='jump_stage_2'" in result
