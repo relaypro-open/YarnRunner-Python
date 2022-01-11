@@ -36,13 +36,14 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'Start': 1}}, variables={{'"""
     )
 
+    pos = result.index("variables={")
     for v in [
         "'$value_string': 'string'",
         "'$value_float': 1.25",
         "'$value_bool': True",
         "'$value_null': None",
     ]:
-        assert v in result
+        assert v in result[pos:]
 
     assert result.endswith("""}, current_node='Start')""")
 
@@ -62,9 +63,10 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, variables={{'"""
     )
 
+    pos = result.index("variables={")
     for v in [
         "'$value_string': 'gnirts'",
         "'$value_float': 2.75",
         "'$value_bool': False",
     ]:
-        assert v in result
+        assert v in result[pos:]

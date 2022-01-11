@@ -69,7 +69,7 @@ def test_shortcuts():
 def test_init_repr():
     assert (
         repr(runner1)
-        == """YarnRunner(open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.yarnc", "rb"), open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.csv"), autostart=True, visits={'Start': 1}, current_node='Start')"""
+        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'Start': 1}}, current_node='Start')"""
     )
 
     result = repr(
@@ -77,5 +77,5 @@ def test_init_repr():
     )
     assert (
         result
-        == """YarnRunner(open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.yarnc", "rb"), open("/home/mapto/work2/YarnRunner-Python/tests/../examples/yarn1/shortcuts.csv"), autostart=False, visits={'Start': 5})"""
+        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'Start': 5}})"""
     )

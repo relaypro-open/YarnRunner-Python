@@ -91,8 +91,9 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
     )
 
+    pos = result.index("visits={")
     for v in ["'Start': 1", "'choice_1': 1"]:
-        assert v in result
+        assert v in result[pos:]
 
     assert "current_node='choice_1'" in result
     assert "command_handlers={'runACommand':" in result
@@ -111,7 +112,8 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
     )
 
+    pos = result.index("visits={")
     for v in ["'Start': 1", "'choice_1': 3"]:
-        assert v in result
+        assert v in result[pos:]
 
     assert "current_node='choice_1'" in result

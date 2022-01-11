@@ -64,10 +64,10 @@ class YarnRunner(object):
             "visits",
             "variables",
             "current_node",
-            "command_handlers",
             "line_buffer",
             "option_buffer",
         ]
+
         pairs = {
             k: repr(self.__getattribute__(k))
             for k in params
@@ -80,7 +80,14 @@ class YarnRunner(object):
                 if f"_{k}" in self.__dict__ and self.__getattribute__(f"_{k}")
             }
         )
+
+        # self._command_handlers done separately because values are symbols (function names that might be absent from local context)
+        comms = ", ".join(f"'{k}': {v.__name__}" for k, v in self._command_handlers.items())
+        if comms:
+            pairs.update({"_command_handlers": f"{{{comms}}}"})
+
         args = ", ".join(f"{k}={v}" for k, v in pairs.items())
+        
         return (
             f"""YarnRunner(open("{self._compiled_yarn_f.name}", "rb"), open("{self._compiled_yarn_f.name.replace(".yarnc", ".csv")}"), autostart={self._autostart}"""
             + f"""{", " + args if args else ""})"""

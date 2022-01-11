@@ -59,7 +59,8 @@ def test_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
     )
 
+    pos = result.index("visits={")
     for v in ["'var_is_1': 0", "'var_is_2': 1", "'Start': 1"]:
-        assert v in result
+        assert v in result[pos:]
 
     assert result.endswith("""}, variables={'$var': 2.0}, current_node='var_is_2')""")

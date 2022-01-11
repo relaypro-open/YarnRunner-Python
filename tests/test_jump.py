@@ -68,13 +68,14 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
     )
 
+    pos = result.index("visits={")
     for v in [
         "'Start': 1",
         "'begin_jump': 1",
         "'jump_stage_2': 1",
         "'jump_complete': 1",
     ]:
-        assert v in result
+        assert v in result[pos:]
 
     assert result.endswith("""}, current_node='jump_complete')""")
 
@@ -92,12 +93,13 @@ def test_init_repr():
         f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
     )
 
+    pos = result.index("visits={")
     for v in [
         "'Start': 1",
         "'begin_jump': 1",
         "'jump_stage_2': 1",
         "'jump_complete': 0",
     ]:
-        assert v in result
+        assert v in result[pos:]
 
     assert "current_node='jump_stage_2'" in result
