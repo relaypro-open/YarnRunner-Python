@@ -211,7 +211,10 @@ class YarnRunner(object):
                 # TODO: implement substitutions
 
             # TODO: maybe do some argument type parsing later
-            self._command_handlers[command](*args)
+            ret = self._command_handlers[command](*args)
+
+            if type(ret) is str:
+                self._line_buffer.append(ret)
 
     def __add_option(self, instruction):
         title_string_key = instruction.operands[0].string_value

@@ -56,6 +56,7 @@ def run_a_command1(arg1, arg2, arg3):
 def run_a_command2(arg1, arg2, arg3):
     global side_effect2
     side_effect2 = (arg1, arg2, arg3)
+    return arg3
 
 
 runner1.add_command_handler("runACommand", run_a_command1)
@@ -77,6 +78,8 @@ def test_start_node_choose2():
     runner2.choose(0)
 
     assert "Here is the node visited as a **result** of the __first__ \"choice\", with a comma." == runner2.get_line()
+    assert runner2.has_line()
+    assert "spaces and /special &chars" == runner2.get_line()
     assert not runner2.has_line()
     assert runner2.finished
 
