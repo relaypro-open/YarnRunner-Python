@@ -1,6 +1,7 @@
 import csv
 import re
 from warnings import warn
+from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
 from .vm_std_lib import functions as std_lib_functions
 
@@ -96,6 +97,11 @@ class YarnRunner(object):
     def debug_program_proto(self):
         print("The protobuf representation of the current program is:")
         print(self._compiled_yarn)
+
+    def debug_to_json_file(self, f):
+        print("The JSON representation of the compiled Yarn program has been written to the file provided.")
+        f.write(json_format.MessageToJson(self._compiled_yarn))
+        f.close()
 
     ##### Public functions to surface via API below here #####
 
