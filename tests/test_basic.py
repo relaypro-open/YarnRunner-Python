@@ -55,7 +55,7 @@ def run_a_command1(arg1, arg2, arg3):
 
 def run_a_command2(arg1, arg2, arg3):
     global side_effect2
-    side_effect2 = arg3
+    side_effect2 = (arg1, arg2, arg3)
 
 
 runner1.add_command_handler("runACommand", run_a_command1)
@@ -81,4 +81,4 @@ def test_start_node_choose2():
     assert runner2.finished
 
     # ensure the command has run
-    assert side_effect2 == "event:/event/event_name"
+    assert side_effect2 == ("arg1", "2", "spaces and /special &chars")

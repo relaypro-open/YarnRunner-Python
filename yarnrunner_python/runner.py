@@ -182,8 +182,22 @@ class YarnRunner(object):
         self._line_buffer.append(self.__lookup_string(string_key))
 
     def __run_command(self, instruction):
+        # split the command specifier by spaces, ignoring spaces
+        # inside single or double quotes (https://stackoverflow.com/a/2787979/)
         command, * \
-            args = instruction.operands[0].string_value.strip().split(" ")
+            args = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''',
+                            instruction.operands[0].string_value.strip())
+        # don't miss that single space at the start of the regex!
+
+        # the above regex leaves quotes in the arguments, so we'll want to remove those
+        def sanitize_quotes(arg):
+            matches = re.match(r'^[\'"](.*)[\'"]$', arg)
+            if matches:
+                return matches.group(1)
+            else:
+                return arg
+
+        args = [sanitize_quotes(arg) for arg in args]
 
         if command not in self._command_handlers.keys():
             warn(

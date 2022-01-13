@@ -12,6 +12,6 @@ title: choice_1
 
 Here is the node visited as a **result** of the __first__ "choice", with a comma.
 
-<<runACommand arg1 2 event:/event/event_name >>
+<<runACommand arg1 2 "spaces and /special &chars" >>
 
 ===
