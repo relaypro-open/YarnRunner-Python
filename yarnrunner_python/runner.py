@@ -7,12 +7,13 @@ from .vm_std_lib import functions as std_lib_functions
 
 
 class YarnRunner(object):
-    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False) -> None:
+    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False, experimental_newlines=False) -> None:
         self._compiled_yarn = YarnProgram()
         self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
         self._names_csv = csv.DictReader(names_csv_f)
         self.__construct_string_lookup_table()
         self._enable_tracing = enable_tracing
+        self._experimental_newlines = experimental_newlines
 
         self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
         self.variables = {}
@@ -24,6 +25,8 @@ class YarnRunner(object):
         self._vm_instruction_stack = [Instruction(
             opcode=Instruction.OpCode.RUN_NODE)]
         self._program_counter = 0
+        self._previous_instruction = Instruction(
+            opcode=Instruction.OpCode.RUN_NODE)
         self.paused = True
         self.finished = False
 
@@ -51,6 +54,13 @@ class YarnRunner(object):
                 f"{string_key} is not a key in the string lookup table.")
         else:
             return self.string_lookup_table[string_key]["text"]
+
+    def __lookup_line_no(self, string_key):
+        if string_key not in self.string_lookup_table:
+            raise Exception(
+                f"{string_key} is not a key in the string lookup table.")
+        else:
+            return int(self.string_lookup_table[string_key]["lineNumber"])
 
     def __find_label(self, label_key):
         labels = self._compiled_yarn.nodes[self.current_node].labels
@@ -167,6 +177,10 @@ class YarnRunner(object):
         self._vm_instruction_stack = (
             self._compiled_yarn.nodes[node_key].instructions)
         self._program_counter = 0
+
+        # not technically true, but close enough
+        self._previous_instruction = Instruction(
+            opcode=Instruction.OpCode.RUN_NODE)
         self.__process_instruction()
 
     def __run_line(self, instruction):
@@ -178,6 +192,18 @@ class YarnRunner(object):
             line_substitutions = self.__find_expressions(
                 instruction.operands[1])
             # TODO: implement substitutions
+
+        if self._experimental_newlines:
+            # attempt to add a newlines if the last thing we did was run a line
+            # but only if there are empty lines in the source file
+            if self._previous_instruction.opcode == Instruction.OpCode.RUN_LINE:
+                prev_line_no = self.__lookup_line_no(
+                    self._previous_instruction.operands[0].string_value)
+                curr_line_no = self.__lookup_line_no(string_key)
+                diff = curr_line_no - prev_line_no
+                if diff > 1:
+                    for _i in range(diff - 1):
+                        self._line_buffer.append('')
 
         self._line_buffer.append(self.__lookup_string(string_key))
 
@@ -364,4 +390,5 @@ class YarnRunner(object):
         opcode_functions[instruction.opcode](instruction)
 
         if not self.paused and not self.finished:
+            self._previous_instruction = instruction
             self.__process_instruction()
