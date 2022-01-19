@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional, Union
 import csv
 import re
 from warnings import warn
+from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction  # type: ignore
 from .vm_std_lib import functions as std_lib_functions
 
@@ -10,8 +11,8 @@ from .vm_std_lib import functions as std_lib_functions
 class YarnRunner(object):
     def __init__(
         self,
-        compiled_yarn_f,
-        names_csv_f,
+        compiled_yarn_f = None,
+        names_csv_f = None,
         autostart=True,
         enable_tracing=False,
         visits: Optional[Dict[str, int]] = None,
@@ -25,12 +26,25 @@ class YarnRunner(object):
             List[Instruction]
         ] = None,  # TODO: what is the correct type here?
         program_counter: int = 0,
+        compiled_yarn = None,
+        string_lookup_table = None
     ) -> None:
+        assert bool(compiled_yarn) != bool(compiled_yarn_f)
         self._compiled_yarn = YarnProgram()
-        self._compiled_yarn_f = compiled_yarn_f  # not ideal to store entire input file, but would need to refactor method signature otherwise
-        self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
-        self._names_csv = csv.DictReader(names_csv_f)
-        self.__construct_string_lookup_table()
+        if compiled_yarn_f:
+            self._compiled_yarn_f = compiled_yarn_f  # not ideal to store entire input file, but would need to refactor method signature otherwise
+            self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
+        else:
+            json_format.ParseDict(compiled_yarn, self._compiled_yarn)
+
+        # assert bool(string_lookup_table) != bool(names_csv_f)
+        if names_csv_f:
+            self._names_csv = csv.DictReader(names_csv_f)
+            self.__construct_string_lookup_table()
+        elif string_lookup_table:
+            self.string_lookup_table = string_lookup_table
+        else:
+            self.string_lookup_table = {}
         self._enable_tracing = enable_tracing
 
         self.visits = (
@@ -43,7 +57,7 @@ class YarnRunner(object):
         self._option_buffer = option_buffer if option_buffer else []
         self._vm_data_stack = vm_data_stack if vm_data_stack else ["Start"]
         self._vm_instruction_stack = (
-            vm_instruction_stack
+            [json_format.Parse(i, Instruction()) for i in vm_instruction_stack]
             if vm_instruction_stack
             else [Instruction(opcode=Instruction.OpCode.RUN_NODE)]
         )
@@ -67,6 +81,7 @@ class YarnRunner(object):
             "command_handlers",
             "line_buffer",
             "option_buffer",
+            "vm_data_stack",
         ]
         pairs = {
             k: repr(self.__getattribute__(k))
@@ -81,14 +96,24 @@ class YarnRunner(object):
             }
         )
         args = ", ".join(f"{k}={v}" for k, v in pairs.items())
+
+        ins = ""
+        if self._vm_instruction_stack:
+            ins = f"""vm_instruction_stack={[json_format.MessageToJson(i) for i in self._vm_instruction_stack]}"""
+
+        yarn = f"compiled_yarn={json_format.MessageToJson(self._compiled_yarn)}"
+
+        lookup_table = f"string_lookup_table={self.string_lookup_table}"
+
         return (
-            f"""YarnRunner(open("{self._compiled_yarn_f.name}", "rb"), open("{self._compiled_yarn_f.name.replace(".yarnc", ".csv")}"), autostart={self._autostart}"""
-            + f"""{", " + args if args else ""})"""
+            f"""YarnRunner({yarn}, {lookup_table}, autostart={self._autostart}"""
+            + f"""{", " + args if args else ""}"""
+            + f"""{", " + ins if ins else ""}"""
+            + ")"
         )
 
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
-
         for entry in self._names_csv:
             self.string_lookup_table[entry["id"]] = entry
 
