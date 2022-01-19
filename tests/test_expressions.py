@@ -36,10 +36,3 @@ def test_expressions2():
     except Exception as e:
         assert str(
             e) == "Yarn stories with interpolated inline expressions are not yet supported."
-
-
-def test_repr():
-    assert (
-        repr(runner1)
-        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'Start': 1}}, variables={{'$name': 'Sam'}}, current_node='Start')"""
-    )

@@ -82,36 +82,3 @@ def test_start_node_choose2():
 
     # ensure the command has run
     assert side_effect2 == "event:/event/event_name"
-
-
-def test_init_repr():
-    result = repr(runner1)
-
-    assert result.startswith(
-        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'"""
-    )
-
-    for v in ["'Start': 1", "'choice_1': 1"]:
-        assert v in result
-
-    assert "current_node='choice_1'" in result
-    assert "command_handlers={'runACommand':" in result
-
-    result = repr(
-        YarnRunner(
-            compiled_yarn_f1,
-            names_csv_f1,
-            autostart=False,
-            current_node="choice_1",
-            visits={"Start": 1, "choice_1": 3},
-        )
-    )
-
-    assert result.startswith(
-        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
-    )
-
-    for v in ["'Start': 1", "'choice_1': 3"]:
-        assert v in result
-
-    assert "current_node='choice_1'" in result

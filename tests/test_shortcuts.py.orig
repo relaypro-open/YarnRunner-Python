@@ -118,3 +118,21 @@ def test_shortcuts():
     assert not runner2.has_line()
     assert runner2.finished
     assert runner2.current_node == 'Start'
+
+<<<<<<< HEAD
+=======
+
+def test_init_repr():
+    assert (
+        repr(runner1)
+        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=True, visits={{'Start': 1}}, current_node='Start')"""
+    )
+
+    result = repr(
+        YarnRunner(compiled_yarn_f1, names_csv_f1, autostart=False, visits={"Start": 5})
+    )
+    assert (
+        result
+        == f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'Start': 5}})"""
+    )
+>>>>>>> 6232731b0090084afab96d7f0ccd2a9441c70034

@@ -48,18 +48,3 @@ def test_conditional_traversal2():
     assert not runner2.has_line()
     assert runner2.finished
     assert runner2.current_node == 'var_is_2'
-
-
-def test_repr():
-    """Testing optional parameters of constructor and repr()"""
-
-    result = repr(runner1)
-
-    assert result.startswith(
-        f"""YarnRunner(open("{compiled_yarn_fname1}", "rb"), open("{names_csv_fname1}"), autostart=False, visits={{'"""
-    )
-
-    for v in ["'var_is_1': 0", "'var_is_2': 1", "'Start': 1"]:
-        assert v in result
-
-    assert result.endswith("""}, variables={'$var': 2.0}, current_node='var_is_2')""")

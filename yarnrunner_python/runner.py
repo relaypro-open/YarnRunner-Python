@@ -83,6 +83,7 @@ class YarnRunner(object):
             "option_buffer",
             "vm_data_stack",
         ]
+
         pairs = {
             k: repr(self.__getattribute__(k))
             for k in params
@@ -114,6 +115,7 @@ class YarnRunner(object):
 
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
+
         for entry in self._names_csv:
             self.string_lookup_table[entry["id"]] = entry
 
