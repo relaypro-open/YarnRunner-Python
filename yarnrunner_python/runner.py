@@ -31,6 +31,7 @@ class YarnRunner(object):
         compiled_yarn = None,
         string_lookup_table = None
     ) -> None:
+
         assert bool(compiled_yarn) != bool(compiled_yarn_f)
         self._compiled_yarn = YarnProgram()
         if compiled_yarn_f:
