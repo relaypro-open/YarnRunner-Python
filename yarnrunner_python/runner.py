@@ -15,6 +15,7 @@ class YarnRunner(object):
         names_csv_f = None,
         autostart=True,
         enable_tracing=False,
+	    experimental_newlines=False,
         visits: Optional[Dict[str, int]] = None,
         variables: Dict[str, Any] = None,
         current_node: str = None,
@@ -26,6 +27,7 @@ class YarnRunner(object):
             List[Instruction]
         ] = None,  # TODO: what is the correct type here?
         program_counter: int = 0,
+        previous_instruction = None,
         compiled_yarn = None,
         string_lookup_table = None
     ) -> None:
@@ -46,6 +48,7 @@ class YarnRunner(object):
         else:
             self.string_lookup_table = {}
         self._enable_tracing = enable_tracing
+        self._experimental_newlines = experimental_newlines
 
         self.visits = (
             visits if visits else {key: 0 for key in self._compiled_yarn.nodes.keys()}
@@ -62,6 +65,8 @@ class YarnRunner(object):
             else [Instruction(opcode=Instruction.OpCode.RUN_NODE)]
         )
         self._program_counter = program_counter
+        self._previous_instruction = previous_instruction if previous_instruction else Instruction(
+            opcode=Instruction.OpCode.RUN_NODE)
         self.paused = True
         self.finished = (
             len(self._vm_instruction_stack) != 0
@@ -82,6 +87,7 @@ class YarnRunner(object):
             "line_buffer",
             "option_buffer",
             "vm_data_stack",
+            "experimental_newlines"
         ]
 
         pairs = {
@@ -102,6 +108,7 @@ class YarnRunner(object):
         if self._vm_instruction_stack:
             ins = f"""vm_instruction_stack={[json_format.MessageToJson(i) for i in self._vm_instruction_stack]}"""
 
+        prev = f"""previous_instruction={json_format.MessageToJson(self._previous_instruction)}"""
         yarn = f"compiled_yarn={json_format.MessageToJson(self._compiled_yarn)}"
 
         lookup_table = f"string_lookup_table={self.string_lookup_table}"
@@ -110,6 +117,7 @@ class YarnRunner(object):
             f"""YarnRunner({yarn}, {lookup_table}, autostart={self._autostart}"""
             + f"""{", " + args if args else ""}"""
             + f"""{", " + ins if ins else ""}"""
+            + f"""{", " + prev if prev else ""}"""
             + ")"
         )
 
@@ -134,6 +142,13 @@ class YarnRunner(object):
                 f"{string_key} is not a key in the string lookup table.")
         else:
             return self.string_lookup_table[string_key]["text"]
+
+    def __lookup_line_no(self, string_key):
+        if string_key not in self.string_lookup_table:
+            raise Exception(
+                f"{string_key} is not a key in the string lookup table.")
+        else:
+            return int(self.string_lookup_table[string_key]["lineNumber"])
 
     def __find_label(self, label_key):
         labels = self._compiled_yarn.nodes[self.current_node].labels
@@ -180,6 +195,11 @@ class YarnRunner(object):
     def debug_program_proto(self):
         print("The protobuf representation of the current program is:")
         print(self._compiled_yarn)
+
+    def debug_to_json_file(self, f):
+        print("The JSON representation of the compiled Yarn program has been written to the file provided.")
+        f.write(json_format.MessageToJson(self._compiled_yarn))
+        f.close()
 
     ##### Public functions to surface via API below here #####
 
@@ -245,6 +265,10 @@ class YarnRunner(object):
         self._vm_instruction_stack = (
             self._compiled_yarn.nodes[node_key].instructions)
         self._program_counter = 0
+
+        # not technically true, but close enough
+        self._previous_instruction = Instruction(
+            opcode=Instruction.OpCode.RUN_NODE)
         self.__process_instruction()
 
     def __run_line(self, instruction):
@@ -257,11 +281,37 @@ class YarnRunner(object):
                 instruction.operands[1])
             # TODO: implement substitutions
 
+        if self._experimental_newlines:
+            # attempt to add a newlines if the last thing we did was run a line
+            # but only if there are empty lines in the source file
+            if self._previous_instruction.opcode == Instruction.OpCode.RUN_LINE:
+                prev_line_no = self.__lookup_line_no(
+                    self._previous_instruction.operands[0].string_value)
+                curr_line_no = self.__lookup_line_no(string_key)
+                diff = curr_line_no - prev_line_no
+                if diff > 1:
+                    for _i in range(diff - 1):
+                        self._line_buffer.append('')
+
         self._line_buffer.append(self.__lookup_string(string_key))
 
     def __run_command(self, instruction):
+        # split the command specifier by spaces, ignoring spaces
+        # inside single or double quotes (https://stackoverflow.com/a/2787979/)
         command, * \
-            args = instruction.operands[0].string_value.strip().split(" ")
+            args = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''',
+                            instruction.operands[0].string_value.strip())
+        # don't miss that single space at the start of the regex!
+
+        # the above regex leaves quotes in the arguments, so we'll want to remove those
+        def sanitize_quotes(arg):
+            matches = re.match(r'^[\'"](.*)[\'"]$', arg)
+            if matches:
+                return matches.group(1)
+            else:
+                return arg
+
+        args = [sanitize_quotes(arg) for arg in args]
 
         if command not in self._command_handlers.keys():
             warn(
@@ -275,7 +325,10 @@ class YarnRunner(object):
                 # TODO: implement substitutions
 
             # TODO: maybe do some argument type parsing later
-            self._command_handlers[command](*args)
+            ret = self._command_handlers[command](*args)
+
+            if type(ret) is str:
+                self._line_buffer.append(ret)
 
     def __add_option(self, instruction) -> None:
         title_string_key = instruction.operands[0].string_value
@@ -425,4 +478,5 @@ class YarnRunner(object):
         opcode_functions[instruction.opcode](instruction)
 
         if not self.paused and not self.finished:
+            self._previous_instruction = instruction
             self.__process_instruction()

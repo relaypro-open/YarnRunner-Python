@@ -68,6 +68,7 @@ As of version v0.0.2, all Yarn Spinner opcodes are currently implemented, as wel
 - An appropriate replacement for the distinction Yarn makes between Functions and Coroutines in Unity (to allow users to register blocking command handlers via this Python runner independent of Unity)
 - Complete implementation of YS2's type system, specifically when performing operations on mismatching types
   - This may be challenging, due to Python being a dynamically typed language
+- The [`<<wait>>` built-in command](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/commands#wait)
 
 ## Development
 

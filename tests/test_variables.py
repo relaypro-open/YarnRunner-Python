@@ -1,12 +1,14 @@
 import os
 from .context import YarnRunner
 
-compiled_yarn_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/variables.yarnc")
-compiled_yarn_f1 = open(compiled_yarn_fname1, "rb")
-names_csv_fname1 = os.path.join(os.path.dirname(__file__), "../examples/yarn1/variables.csv")
-names_csv_f1 = open(names_csv_fname1, "r")
-compiled_yarn_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/variables.yarnc"), "rb")
-names_csv_f2 = open(os.path.join(os.path.dirname(__file__), "../examples/yarn2/variables.csv"), "r")
+compiled_yarn_f1 = open(os.path.join(os.path.dirname(
+    __file__), '../examples/yarn1/variables.yarnc'), 'rb')
+names_csv_f1 = open(os.path.join(os.path.dirname(
+    __file__), '../examples/yarn1/variables.csv'), 'r')
+compiled_yarn_f2 = open(os.path.join(os.path.dirname(
+    __file__), '../examples/yarn2/variables.yarnc'), 'rb')
+names_csv_f2 = open(os.path.join(os.path.dirname(
+    __file__), '../examples/yarn2/variables.csv'), 'r')
 
 runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1)
 runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2)
@@ -27,4 +29,3 @@ def test_variables2():
     assert runner2.variables["$value_string"] == "string"
     assert runner2.variables["$value_float"] == 1.25
     assert runner2.variables["$value_bool"] == True
-
