@@ -60,7 +60,7 @@ def test_shortcuts2():
     assert runner3.current_node == 'Start'
 
 
-def test_shortcuts3():
+def test_shortcuts_json():
     compiled_yarn_f3 = open(compiled_yarn_fname1, "rb")
     names_csv_f3 = open(names_csv_fname1, "r")
     runner3 = YarnRunner(compiled_yarn_f3, names_csv_f3)
@@ -76,8 +76,11 @@ def test_shortcuts3():
     assert choices[2]["text"] == "Option 3"
     assert choices[3]["text"] == "Option 4"
 
-    frozen = repr(runner3)
-    runner4 = eval(frozen)
+    dump = runner3.save()
+    compiled_yarn_f4 = open(compiled_yarn_fname1, "rb")
+    names_csv_f4 = open(names_csv_fname1, "r")
+    runner4 = YarnRunner(compiled_yarn_f4, names_csv_f4)
+    runner4.load(dump)
 
     choices = runner4.get_choices()
 
@@ -95,7 +98,6 @@ def test_shortcuts3():
     assert not runner4.has_line()
     assert runner4.finished
     assert runner4.current_node == 'Start'
-
 
 def test_start_node_text2():
     assert "This is a test of shortcut functionality." == runner2.get_line()

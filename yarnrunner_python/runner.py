@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import csv
 import re
+import json
 from warnings import warn
 from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction  # type: ignore
@@ -9,118 +10,60 @@ from .vm_std_lib import functions as std_lib_functions
 
 
 class YarnRunner(object):
-    def __init__(
-        self,
-        compiled_yarn_f = None,
-        names_csv_f = None,
-        autostart=True,
-        enable_tracing=False,
-	    experimental_newlines=False,
-        visits: Optional[Dict[str, int]] = None,
-        variables: Dict[str, Any] = None,
-        current_node: str = None,
-        command_handlers: Dict[str, Any] = None,
-        line_buffer: List[str] = None,
-        option_buffer: List[Dict[str, Union[int, str]]] = None,
-        vm_data_stack: Optional[List[Union[str, float, bool, None]]] = None,
-        vm_instruction_stack: Optional[
-            List[Instruction]
-        ] = None,  # TODO: what is the correct type here?
-        program_counter: int = 0,
-        previous_instruction = None,
-        compiled_yarn = None,
-        string_lookup_table = None
-    ) -> None:
-
-        assert bool(compiled_yarn) != bool(compiled_yarn_f)
+    def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False, experimental_newlines=False) -> None:
         self._compiled_yarn = YarnProgram()
-        if compiled_yarn_f:
-            self._compiled_yarn_f = compiled_yarn_f  # not ideal to store entire input file, but would need to refactor method signature otherwise
-            self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
-        else:
-            json_format.ParseDict(compiled_yarn, self._compiled_yarn)
-
-        # assert bool(string_lookup_table) != bool(names_csv_f)
-        if names_csv_f:
-            self._names_csv = csv.DictReader(names_csv_f)
-            self.__construct_string_lookup_table()
-        elif string_lookup_table:
-            self.string_lookup_table = string_lookup_table
-        else:
-            self.string_lookup_table = {}
+        self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
+        self._names_csv = csv.DictReader(names_csv_f)
+        self.__construct_string_lookup_table()
         self._enable_tracing = enable_tracing
         self._experimental_newlines = experimental_newlines
 
-        self.visits = (
-            visits if visits else {key: 0 for key in self._compiled_yarn.nodes.keys()}
-        )
-        self.variables = variables if variables else {}
-        self.current_node = current_node
-        self._command_handlers = command_handlers if command_handlers else {}
-        self._line_buffer = line_buffer if line_buffer else []
-        self._option_buffer = option_buffer if option_buffer else []
-        self._vm_data_stack = vm_data_stack if vm_data_stack else ["Start"]
-        self._vm_instruction_stack = (
-            [json_format.Parse(i, Instruction()) for i in vm_instruction_stack]
-            if vm_instruction_stack
-            else [Instruction(opcode=Instruction.OpCode.RUN_NODE)]
-        )
-        self._program_counter = program_counter
-        self._previous_instruction = previous_instruction if previous_instruction else Instruction(
+        self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
+        self.variables = {}
+        self.current_node = None
+        self._command_handlers = {}
+        self._line_buffer = []
+        self._option_buffer = []
+        self._vm_data_stack = ["Start"]
+        self._vm_instruction_stack = [Instruction(
+            opcode=Instruction.OpCode.RUN_NODE)]
+        self._program_counter = 0
+        self._previous_instruction = Instruction(
             opcode=Instruction.OpCode.RUN_NODE)
         self.paused = True
-        self.finished = (
-            len(self._vm_instruction_stack) != 0
-            and self._vm_instruction_stack[-1].opcode == Instruction.OpCode.STOP
-        )
+        self.finished = False
 
-        self._autostart = autostart
         if autostart:
             self.resume()
 
-    def __repr__(self):
-        params = [
-            "enable_tracing",
-            "visits",
-            "variables",
-            "current_node",
-            "command_handlers",
-            "line_buffer",
-            "option_buffer",
-            "vm_data_stack",
-            "experimental_newlines"
-        ]
-
-        pairs = {
-            k: repr(self.__getattribute__(k))
-            for k in params
-            if k in self.__dict__ and self.__getattribute__(k)
+    def save(self) -> str:
+        dump = {
+            # "program_version": hash(self._compiled_yarn) + hash(self.string_lookup_table),
+            "visits": self.visits,
+            "variables": self.variables,
+            "line_buffer": self._line_buffer,
+            "option_buffer": self._option_buffer,
+            "vm_data_stack": self._vm_data_stack,
+            "vm_instruction_stack": [json.loads(json_format.MessageToJson(i)) for i in self._vm_instruction_stack],
+            "program_counter": self._program_counter,
+            "previous_instruction": json.loads(json_format.MessageToJson(self._previous_instruction)),
+            "finished": self.finished
         }
-        pairs.update(
-            {
-                k: repr(self.__getattribute__(f"_{k}"))
-                for k in params
-                if f"_{k}" in self.__dict__ and self.__getattribute__(f"_{k}")
-            }
-        )
-        args = ", ".join(f"{k}={v}" for k, v in pairs.items())
+        return json.dumps(dump)
 
-        ins = ""
-        if self._vm_instruction_stack:
-            ins = f"""vm_instruction_stack={[json_format.MessageToJson(i) for i in self._vm_instruction_stack]}"""
-
-        prev = f"""previous_instruction={json_format.MessageToJson(self._previous_instruction)}"""
-        yarn = f"compiled_yarn={json_format.MessageToJson(self._compiled_yarn)}"
-
-        lookup_table = f"string_lookup_table={self.string_lookup_table}"
-
-        return (
-            f"""YarnRunner({yarn}, {lookup_table}, autostart={self._autostart}"""
-            + f"""{", " + args if args else ""}"""
-            + f"""{", " + ins if ins else ""}"""
-            + f"""{", " + prev if prev else ""}"""
-            + ")"
-        )
+    def load(self, data: str) -> None:
+        # if not data or "program_version" not in data or data["program_version"] != hash(self._compiled_yarn) + hash(self.string_lookup_table):
+        #     raise ValueError("Mismatched yarn version")
+        dump = json.loads(data)
+        self.visits = dump["visits"]
+        self.variables = dump["variables"]
+        self._line_buffer = dump["line_buffer"]
+        self._option_buffer = dump["option_buffer"]
+        self._vm_data_stack = dump["vm_data_stack"]
+        self._vm_instruction_stack = [json_format.Parse(json.dumps(i), Instruction()) for i in dump["vm_instruction_stack"]]
+        self._program_counter = dump["program_counter"]
+        self._previous_instruction = json_format.Parse(json.dumps(dump["previous_instruction"]), Instruction())
+        self.finished = dump["finished"]
 
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
