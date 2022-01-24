@@ -41,6 +41,7 @@ class YarnRunner(object):
             # "program_version": hash(self._compiled_yarn) + hash(self.string_lookup_table),
             "visits": self.visits,
             "variables": self.variables,
+            "current_node": self.current_node,
             "line_buffer": self._line_buffer,
             "option_buffer": self._option_buffer,
             "vm_data_stack": self._vm_data_stack,
@@ -57,6 +58,7 @@ class YarnRunner(object):
         dump = json.loads(data)
         self.visits = dump["visits"]
         self.variables = dump["variables"]
+        self.current_node = dump["current_node"]
         self._line_buffer = dump["line_buffer"]
         self._option_buffer = dump["option_buffer"]
         self._vm_data_stack = dump["vm_data_stack"]
