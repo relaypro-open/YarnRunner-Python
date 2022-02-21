@@ -4,3 +4,4 @@
 .python-version
 *.egg-info/
 dist/
+build/
