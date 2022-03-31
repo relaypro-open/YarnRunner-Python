@@ -1,0 +1,4 @@
+id,text,file,node,lineNumber
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn-Start-0,Here's an example of returning inline from a node.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn,Start,3
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn-Start-1,Here's the last line.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn,Start,7
+line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn-node2-2,Here's the inline node.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/return.yarn,node2,12

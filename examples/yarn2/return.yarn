@@ -1,0 +1,17 @@
+title: Start
+---
+Here's an example of returning inline from a node.
+
+<<jump node2>>
+
+Here's the last line.
+===
+title: node2
+---
+
+Here's the inline node.
+
+// This command isn't implemented in the runner, but only in this specific test.
+<<return>>
+
+===

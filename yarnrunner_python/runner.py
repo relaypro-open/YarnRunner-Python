@@ -18,6 +18,7 @@ class YarnRunner(object):
         self.visits = {key: 0 for key in self._compiled_yarn.nodes.keys()}
         self.variables = {}
         self.current_node = None
+        self._node_stack = []
         self._command_handlers = {}
         self._line_buffer = []
         self._option_buffer = []
@@ -146,6 +147,18 @@ class YarnRunner(object):
     def add_command_handler(self, command, fn):
         self._command_handlers[command] = fn
 
+    def climb_node_stack(self):
+        if len(self._node_stack) < 1:
+            raise Exception(
+                "climb_node_stack() was called with an empty node stack.")
+
+        previous_node, previous_pc = self._node_stack.pop()
+        self.current_node = previous_node
+        self._vm_instruction_stack = self._compiled_yarn.nodes[previous_node].instructions
+        self._program_counter = previous_pc
+        if not self.paused:
+            self.__process_instruction()
+
     ##### OpCode Implementations below here #####
 
     def __jump_to(self, instruction):
@@ -170,6 +183,7 @@ class YarnRunner(object):
             raise Exception(
                 f"{node_key} is not a valid node in this Yarn story.")
 
+        self._node_stack.append((self.current_node, self._program_counter))
         self.current_node = node_key
         self.visits[node_key] += 1
         self.__debug_log(
