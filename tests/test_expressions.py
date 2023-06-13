@@ -17,24 +17,18 @@ runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2, autostart=False)
 
 
 def test_expressions1():
-    try:
-        runner1.resume()
+    expected_line = "Hello there Sam."
 
-        # the runner should throw an error
-        raise Exception(
-            "The runner ran without any issues. This test should fail. An Exception was expected.")
-    except Exception as e:
-        assert str(
-            e) == "Yarn stories with interpolated inline expressions are not yet supported."
+    runner1.resume()
+
+    actual_line = runner1.get_line()
+    assert actual_line == expected_line
 
 
 def test_expressions2():
-    try:
-        runner2.resume()
+    expected_line = "Hello there Sam."
 
-        # the runner should throw an error
-        raise Exception(
-            "The runner ran without any issues. This test should fail. An Exception was expected.")
-    except Exception as e:
-        assert str(
-            e) == "Yarn stories with interpolated inline expressions are not yet supported."
+    runner2.resume()
+
+    actual_line = runner2.get_line()
+    assert actual_line == expected_line
