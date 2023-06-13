@@ -256,9 +256,9 @@ class YarnRunner(object):
             if len(instruction.operands) > 1:
                 line_substitutions = self.__find_expressions(
                     instruction.operands[1])
-                # TODO: implement substitutions
+                for index, arg in enumerate(args):
+                    args[index] = arg.format(*line_substitutions)
 
-            # TODO: maybe do some argument type parsing later
             ret = self._command_handlers[command](*args)
 
             if type(ret) is str:
@@ -270,13 +270,14 @@ class YarnRunner(object):
 
         # if this instruction has a second operand, it's the number of expressions
         # on the line that need to be evaluated.
+        line_substitutions = []
         if len(instruction.operands) > 2:
             line_substitutions = self.__find_expressions(
                 instruction.operands[2])
 
         self._option_buffer.append({
             'index': len(self._option_buffer),
-            'text': self.__lookup_string(title_string_key),
+            'text': self.__lookup_string(title_string_key).format(*line_substitutions),
             'choice': choice_path
         })
 
