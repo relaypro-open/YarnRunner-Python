@@ -221,13 +221,7 @@ class YarnRunner(object):
                     for _i in range(diff - 1):
                         self._line_buffer.append('')
 
-        self._line_buffer.append(
-            self._make_line_substitutions(
-                self.__lookup_string(string_key), line_substitutions))
-        
-    @staticmethod
-    def _make_line_substitutions(line, substitutions):
-        return line.format(*substitutions)
+        self._line_buffer.append(self.__lookup_string(string_key).format(*line_substitutions))
 
     def __run_command(self, instruction):
         # split the command specifier by spaces, ignoring spaces
