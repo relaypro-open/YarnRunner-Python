@@ -9,7 +9,7 @@ This library currently supports the compiled story format from Yarn Spinner 1.0.
 Right now, the library can be installed directly from source or from [our Releases page](https://github.com/relaypro-open/YarnRunner-Python/releases). We plan to publish the library on PyPi in the near future.
 
 ```
-pip install git+https://github.com/relaypro-open/YarnRunner-Python@v0.0.2#egg=yarnrunner_python
+pip install git+https://github.com/relaypro-open/YarnRunner-Python@v0.2.5#egg=yarnrunner_python
 ```
 
 #### Using the library

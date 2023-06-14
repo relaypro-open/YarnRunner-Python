@@ -2,6 +2,8 @@
 # examples/*.csv
 **/__pycache__
 .python-version
+.tool-versions
+venv/
 *.egg-info/
 dist/
 build/
