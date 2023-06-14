@@ -13,28 +13,26 @@ names_csv_f2 = open(os.path.join(os.path.dirname(
 runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1, autostart=False)
 runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2, autostart=False)
 
-# TODO: implement a test for expression parsing
 
+def expression_command_handler(first, second, third):
+    assert first == "Hello there Sam."
+    assert second == "5"
+    assert third == "My name is Sam Jose."
 
 def test_expressions1():
-    try:
-        runner1.resume()
+    expected_line = "Hello there Sam."
 
-        # the runner should throw an error
-        raise Exception(
-            "The runner ran without any issues. This test should fail. An Exception was expected.")
-    except Exception as e:
-        assert str(
-            e) == "Yarn stories with interpolated inline expressions are not yet supported."
+    runner1.resume()
 
+    assert runner1.get_line() == expected_line
 
 def test_expressions2():
-    try:
-        runner2.resume()
+    runner2.add_command_handler("test_command", expression_command_handler)
+    expected_line = "My name is Sam."
 
-        # the runner should throw an error
-        raise Exception(
-            "The runner ran without any issues. This test should fail. An Exception was expected.")
-    except Exception as e:
-        assert str(
-            e) == "Yarn stories with interpolated inline expressions are not yet supported."
+    runner2.resume()
+    choices = runner2.get_choices()
+
+    assert runner2.get_line() == expected_line
+    assert choices[0]['text'] == "I want to hug Jose"
+    assert choices[1]['text'] == "I want to punch Jose"

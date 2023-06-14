@@ -1,2 +1,6 @@
 id,text,file,node,lineNumber
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/expressions.yarn-Start-0,Hello there {0}.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/expressions.yarn,Start,5
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn-Start-0,My name is {0}.,C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn,Start,7
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn-Start-1,I want to hug {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn,Start,13
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn-Start-2,You punch {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn,Start,14
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn-Start-3,I want to punch {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn,Start,15
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn-Start-4,You hug {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\expressions.yarn,Start,16

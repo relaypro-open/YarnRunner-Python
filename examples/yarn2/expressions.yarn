@@ -1,6 +1,17 @@
 title: Start
 ---
 <<set $name to "Sam">>
+<<set $friend to "Jose">>
 
-Hello there {$name}.
+//simple expression in line
+My name is {$name}.
+
+//in custom command parameters
+<<test_command "Hello there {$name}." 5 "My name is {$name} {$friend}.">>
+
+//in options
+-> I want to hug {$friend}
+    You punch {$friend}
+-> I want to punch {$friend}
+    You hug {$friend}
 ===
