@@ -62,7 +62,6 @@ A few gotchas to look out for:
 
 As of version v0.0.2, all Yarn Spinner opcodes are currently implemented, as well as Yarn Spinner 1's internal standard library of functions and operators. As of version v0.2.1, typed versions of these functions (introduced in Yarn Spinner 2) are present, but full YS2 parity has not been verified at this time. The known features currently missing are:
 
-- Line conditions and the `IsAvailable` flag on options [(see Yarn Docs on "Conditional Options")](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/flow-control#conditional-options)
 - Localisation and Line IDs [(see Yarn's Localization docs)](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/assets-and-localization)
 - An appropriate replacement for the distinction Yarn makes between Functions and Coroutines in Unity (to allow users to register blocking command handlers via this Python runner independent of Unity)
 - Complete implementation of YS2's type system, specifically when performing operations on mismatching types

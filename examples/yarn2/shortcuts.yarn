@@ -4,7 +4,7 @@ This is a test of shortcut functionality.
 
 -> Option 1
     Option 1 selected.
--> Option 2
+-> Option 2 <<if 0 > 1>>
     Option 2 selected.
 -> Option 3
 -> Option 4
