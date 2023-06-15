@@ -270,11 +270,11 @@ class YarnRunner(object):
                 instruction.operands[2])
 
         available = True
-        if len(self._vm_data_stack) > 0 and isinstance(self._vm_data_stack[0], bool):
-            # there is a boolean in the stack while adding this option, means an evaluation occurred
-            available = self._vm_data_stack[0]
-            # we consume this data because the vm doesn't pops it and lives forever in the stack
-            self._vm_data_stack.pop()
+        if len(instruction.operands) > 3 and instruction.operands[3].bool_value:
+            # the fourth operand is a boolean indicating if this option had a condition
+            # we pop this result data because the vm doesn't do it itself
+            available = self._vm_data_stack.pop()
+
 
         self._option_buffer.append({
             'index': len(self._option_buffer),
