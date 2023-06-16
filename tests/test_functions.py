@@ -11,43 +11,43 @@ compiled_yarn_f2 = open(os.path.join(os.path.dirname(
 names_csv_f2 = open(os.path.join(os.path.dirname(
     __file__), '../examples/yarn2/functions.csv'), 'r')
 
-runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1)
-runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2)
-
-# random with seed to ensure deterministic tests
-random_seed = random.Random("seed")
+# autostart=False so the runner doesn't start before the functions are registered
+runner1 = YarnRunner(compiled_yarn_f1, names_csv_f1, autostart=False)
+runner2 = YarnRunner(compiled_yarn_f2, names_csv_f2, autostart=False)
 
 
 def add_numbers(first: int, second: int) -> int:
-    return first + second
+    return int(first + second)
 
 
 def dice(faces: int) -> int:
-    return random_seed.randrange(1, faces)
+    return int(6)
 
 
 def random_range(start: int, stop: int) -> int:
-    return random_seed.randrange(start , stop)
+    return int(6)
 
 
-runner1.add_command_handler("add_numbers", add_numbers)
-runner1.add_command_handler("dice", dice)
-runner1.add_command_handler("random_range", random_range)
+runner1.add_function_handler("add_numbers", add_numbers)
+runner1.add_function_handler("dice", dice)
+runner1.add_function_handler("random_range", random_range)
 
-runner2.add_command_handler("add_numbers", add_numbers)
-runner2.add_command_handler("dice", dice)
-runner2.add_command_handler("random_range", random_range)
+runner2.add_function_handler("add_numbers", add_numbers)
+runner2.add_function_handler("dice", dice)
+runner2.add_function_handler("random_range", random_range)
 
 
 def test_run_functions_1():
+    runner1.resume()
     lines = runner1.get_lines()
-    assert "One plus one is 2" == lines[0]
-    assert "You rolled a six!" == lines[1]
-    assert "Gambler: My lucky number is 3!" == lines[2]
+    assert lines[0] == "One plus one is 2"
+    assert lines[1] == "You rolled a six!"
+    assert lines[2] == "Gambler: My lucky number is 6!"
 
 
 def test_run_functions_2():
-    lines = runner1.get_lines()
-    assert "One plus one is 2" == lines[0]
-    assert "You rolled a six!" == lines[1]
-    assert "Gambler: My lucky number is 3!" == lines[2]
+    runner2.resume()
+    lines = runner2.get_lines()
+    assert lines[0] == "One plus one is 2"
+    assert lines[1] == "You rolled a six!"
+    assert lines[2] == "Gambler: My lucky number is 6!"

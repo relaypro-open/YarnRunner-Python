@@ -1,5 +1,6 @@
 import csv
 import re
+from inspect import signature
 from warnings import warn
 from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
@@ -20,6 +21,7 @@ class YarnRunner(object):
         self.current_node = None
         self._node_stack = []
         self._command_handlers = {}
+        self._function_handlers = {}
         self._line_buffer = []
         self._option_buffer = []
         self._vm_data_stack = ["Start"]
@@ -149,6 +151,9 @@ class YarnRunner(object):
 
     def add_command_handler(self, command, fn):
         self._command_handlers[command] = fn
+
+    def add_function_handler(self, command, fn):
+        self._function_handlers[command] = fn
 
     def climb_node_stack(self):
         if len(self._node_stack) < 1:
@@ -306,12 +311,18 @@ class YarnRunner(object):
         self._vm_data_stack.pop(0)
 
     def __call_func(self, instruction):
+        custom = False
         function_name = instruction.operands[0].string_value
-        if function_name not in std_lib_functions:
+        if function_name in std_lib_functions:
+            expected_params, fn = std_lib_functions[function_name]
+        elif function_name in self._function_handlers.keys():
+            custom = True
+            fn = self._function_handlers[function_name]
+            expected_params = len(signature(fn).parameters)
+        else:
             raise Exception(
-                f"The internal function `{function_name}` is not implemented in this Yarn runtime.")
+                f"The function `{function_name}` is not implemented, and is not registered as a custom function.")
 
-        expected_params, fn = std_lib_functions[function_name]
         actual_params = int(self._vm_data_stack.pop(0))
 
         if expected_params != actual_params:
@@ -324,7 +335,10 @@ class YarnRunner(object):
             expected_params -= 1
 
         # invoke the function
-        ret = fn(params)
+        if custom:
+            ret = fn(*params)
+        else:
+            ret = fn(params)
 
         # Store the return value on the stack
         self._vm_data_stack.insert(0, ret)
