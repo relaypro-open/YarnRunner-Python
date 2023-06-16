@@ -311,37 +311,38 @@ class YarnRunner(object):
         self._vm_data_stack.pop(0)
 
     def __call_func(self, instruction):
-        custom = False
         function_name = instruction.operands[0].string_value
-        if function_name in std_lib_functions:
+
+        def execute_std():
             expected_params, fn = std_lib_functions[function_name]
-        elif function_name in self._function_handlers.keys():
-            custom = True
+            params = extract_params(expected_params)
+            return fn(params)
+
+        def execute_custom():
             fn = self._function_handlers[function_name]
-            expected_params = len(signature(fn).parameters)
+            params = extract_params(len(signature(fn).parameters))
+            return fn(*params)
+
+        def extract_params(expected_params):
+            actual_params = int(self._vm_data_stack.pop(0))
+            if expected_params != actual_params:
+                raise Exception(
+                    f"The function `{function_name} expects {expected_params} parameters but received {actual_params} parameters")
+            params = []
+            while expected_params > 0:
+                params.insert(0, self._vm_data_stack.pop(0))
+                expected_params -= 1
+            return params
+
+        if function_name in std_lib_functions:
+            result = execute_std()
+        elif function_name in self._function_handlers:
+            result = execute_custom()
         else:
             raise Exception(
                 f"The function `{function_name}` is not implemented, and is not registered as a custom function.")
-
-        actual_params = int(self._vm_data_stack.pop(0))
-
-        if expected_params != actual_params:
-            raise Exception(
-                f"The internal function `{function_name} expects {expected_params} parameters but received {actual_params} parameters")
-
-        params = []
-        while expected_params > 0:
-            params.insert(0, self._vm_data_stack.pop(0))
-            expected_params -= 1
-
-        # invoke the function
-        if custom:
-            ret = fn(*params)
-        else:
-            ret = fn(params)
-
         # Store the return value on the stack
-        self._vm_data_stack.insert(0, ret)
+        self._vm_data_stack.insert(0, result)
 
     def __push_variable(self, instruction):
         variable_name = instruction.operands[0].string_value
