@@ -1,8 +1,11 @@
+from typing import Any, Dict, List, Optional, Union
+
 import csv
 import re
+import json
 from warnings import warn
 from google.protobuf import json_format
-from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
+from .yarn_spinner_pb2 import Program as YarnProgram, Instruction  # type: ignore
 from .vm_std_lib import functions as std_lib_functions
 
 
@@ -34,6 +37,37 @@ class YarnRunner(object):
         if autostart:
             self.resume()
 
+    def save(self) -> str:
+        dump = {
+            # "program_version": hash(self._compiled_yarn) + hash(self.string_lookup_table),
+            "visits": self.visits,
+            "variables": self.variables,
+            "current_node": self.current_node,
+            "line_buffer": self._line_buffer,
+            "option_buffer": self._option_buffer,
+            "vm_data_stack": self._vm_data_stack,
+            "vm_instruction_stack": [json.loads(json_format.MessageToJson(i)) for i in self._vm_instruction_stack],
+            "program_counter": self._program_counter,
+            "previous_instruction": json.loads(json_format.MessageToJson(self._previous_instruction)),
+            "finished": self.finished
+        }
+        return json.dumps(dump)
+
+    def load(self, data: str) -> None:
+        # if not data or "program_version" not in data or data["program_version"] != hash(self._compiled_yarn) + hash(self.string_lookup_table):
+        #     raise ValueError("Mismatched yarn version")
+        dump = json.loads(data)
+        self.visits = dump["visits"]
+        self.variables = dump["variables"]
+        self.current_node = dump["current_node"]
+        self._line_buffer = dump["line_buffer"]
+        self._option_buffer = dump["option_buffer"]
+        self._vm_data_stack = dump["vm_data_stack"]
+        self._vm_instruction_stack = [json_format.Parse(json.dumps(i), Instruction()) for i in dump["vm_instruction_stack"]]
+        self._program_counter = dump["program_counter"]
+        self._previous_instruction = json_format.Parse(json.dumps(dump["previous_instruction"]), Instruction())
+        self.finished = dump["finished"]
+
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
 
@@ -49,7 +83,7 @@ class YarnRunner(object):
         self.paused = False
         self.__process_instruction()
 
-    def __lookup_string(self, string_key):
+    def __lookup_string(self, string_key) -> str:
         if string_key not in self.string_lookup_table:
             raise Exception(
                 f"{string_key} is not a key in the string lookup table.")
@@ -258,7 +292,7 @@ class YarnRunner(object):
             if type(ret) is str:
                 self._line_buffer.append(ret)
 
-    def __add_option(self, instruction):
+    def __add_option(self, instruction) -> None:
         title_string_key = instruction.operands[0].string_value
         choice_path = instruction.operands[1].string_value
 
