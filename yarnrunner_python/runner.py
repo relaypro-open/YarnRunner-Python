@@ -1,6 +1,7 @@
 import csv
 import re
 from inspect import signature
+from typing import Callable
 from warnings import warn
 from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
@@ -149,11 +150,27 @@ class YarnRunner(object):
         self._vm_data_stack.insert(0, choice["choice"])
         self.resume()
 
-    def add_command_handler(self, command, fn):
-        self._command_handlers[command] = fn
+    def add_command_handler(self, command: str, cmd: Callable):
+        """
+        Registers a custom command that can be invoked from Yarn scripts.
+        Like `<<get_player_name>>` or `<<walk MyCharacter StageLeft>>`.
+        Usually these commands don't return anything. Returning a string, will put it on the line where is used.
+        More info on https://docs.yarnspinner.dev/using-yarnspinner-with-unity/creating-commands-functions#defining-commands
+        :param command: A string representing how the command in invoked from the Yarn script
+        :param cmd: A function for handling the invocation.
+        """
+        self._command_handlers[command] = cmd
 
-    def add_function_handler(self, command, fn):
-        self._function_handlers[command] = fn
+    def add_function_handler(self, function, fn):
+        """
+        Registers a custom function that can be invoked from Yarn scripts.
+        Like `dice(6)` or `random_range(1,10)`.
+        These functions return something and can be used in conditionals and lines as well.
+        More info on https://docs.yarnspinner.dev/using-yarnspinner-with-unity/creating-commands-functions#defining-functions
+        :param function: A string representing how the function is invoked from the Yarn script
+        :param fn: A function for handling the invocation.
+        """
+        self._function_handlers[function] = fn
 
     def climb_node_stack(self):
         if len(self._node_stack) < 1:
