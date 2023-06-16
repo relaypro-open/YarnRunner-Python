@@ -83,6 +83,18 @@ To make a release:
 2. Increment the `version` key in `setup.cfg`.
 3. Run `python -m build`.
 
+## Updating the protobuf
+
+This project relies on a [Protocol Buffer](https://protobuf.dev/) shared between the Yarn Spinner project and this project to decode compiled Yarn files. Occasionally, this protocol is updated, at which point we must update our implementation. To do this:
+
+1. Pull the latest version of `yarn_spinner.proto` from the YarnSpinner respository [here](https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/YarnSpinner/yarn_spinner.proto).
+
+2. Compile a new verison of the protobuf library. Ensure you have `protoc` installed as described [here](https://grpc.io/docs/protoc-installation/), then, from the root of the respository, run:
+
+```sh
+protoc --python_out=yarnrunner_python ./yarn_spinner.proto
+```
+
 ## Updating the examples
 
 The source code of the examples are located inside `*.yarn` files. `*.csv` and `*.yarnc` files are generated via the Yarn Spinner compiler. To compile these files, follow the below steps:
