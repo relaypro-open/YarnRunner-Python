@@ -1,9 +1,9 @@
 id,text,file,node,lineNumber
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-0,This is a test of shortcut functionality.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,3
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-1,Option 1,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,5
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-2,Option 1 selected.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,6
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-3,Option 2,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,7
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-4,Option 2 selected.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,8
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-5,Option 3,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,9
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-6,Option 4,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,10
-line:/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn-Start-7,This is the last line.,/Users/sweaver/Git/YarnRunner-Python/examples/yarn2/shortcuts.yarn,Start,12
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-0,This is a test of shortcut functionality.,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,3
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-1,Option 1,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,5
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-2,Option 1 selected.,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,6
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-3,Option 2,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,7
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-4,Option 2 selected.,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,8
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-5,Option 3,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,9
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-6,Option 4,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,10
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn-Start-7,This is the last line.,C:\Documents\development\YarnRunner-Python\examples\yarn2\shortcuts.yarn,Start,12

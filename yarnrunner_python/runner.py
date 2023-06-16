@@ -269,10 +269,18 @@ class YarnRunner(object):
             line_substitutions = self.__find_expressions(
                 instruction.operands[2])
 
+        available = True
+        if len(instruction.operands) > 3 and instruction.operands[3].bool_value:
+            # the fourth operand is a boolean indicating if this option had a condition
+            # we pop this result data because the vm doesn't do it itself
+            available = self._vm_data_stack.pop()
+
+
         self._option_buffer.append({
             'index': len(self._option_buffer),
             'text': self.__lookup_string(title_string_key).format(*line_substitutions),
-            'choice': choice_path
+            'choice': choice_path,
+            'available': available
         })
 
     def __show_options(self, _instruction):

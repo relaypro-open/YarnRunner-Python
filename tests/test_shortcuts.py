@@ -52,9 +52,13 @@ def test_start_node_choices2():
 
     assert len(choices) == 4
     assert choices[0]["text"] == "Option 1"
+    assert choices[0]["available"] is True
     assert choices[1]["text"] == "Option 2"
+    assert choices[1]["available"] is False
     assert choices[2]["text"] == "Option 3"
+    assert choices[2]["available"] is True
     assert choices[3]["text"] == "Option 4"
+    assert choices[3]["available"] is True
 
 
 def test_shortcuts():
