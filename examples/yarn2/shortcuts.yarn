@@ -6,7 +6,7 @@ This is a test of shortcut functionality.
     Option 1 selected.
 -> Option 2 <<if 0 > 1>>
     Option 2 selected.
--> Option 3
+-> Option 3 <<if 1 > 0>>
 -> Option 4
 
 This is the last line.
