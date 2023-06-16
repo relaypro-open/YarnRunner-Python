@@ -7,13 +7,7 @@ names_csv_f = open(os.path.join(os.path.dirname(
     __file__), '../examples/yarn2/experimental-newlines.csv'), 'r')
 
 runner_normal = YarnRunner(compiled_yarn_f, names_csv_f)
-
-# reset file position
-compiled_yarn_f.seek(0, 0)
-names_csv_f.seek(0, 0)
-
-runner_experimental = YarnRunner(
-    compiled_yarn_f, names_csv_f, experimental_newlines=True)
+runner_experimental = YarnRunner(compiled_yarn_f, names_csv_f, experimental_newlines=True)
 
 
 def test_normal_newlines():

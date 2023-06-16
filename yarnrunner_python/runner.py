@@ -10,6 +10,10 @@ from .vm_std_lib import functions as std_lib_functions
 
 class YarnRunner(object):
     def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False, experimental_newlines=False) -> None:
+        # reset files' position before reading
+        compiled_yarn_f.seek(0, 0)
+        names_csv_f.seek(0, 0)
+
         self._compiled_yarn = YarnProgram()
         self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
         self._names_csv = csv.DictReader(names_csv_f)
