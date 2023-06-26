@@ -1,5 +1,7 @@
 import csv
 import re
+from inspect import signature
+from typing import Callable
 from warnings import warn
 from google.protobuf import json_format
 from .yarn_spinner_pb2 import Program as YarnProgram, Instruction
@@ -8,6 +10,10 @@ from .vm_std_lib import functions as std_lib_functions
 
 class YarnRunner(object):
     def __init__(self, compiled_yarn_f, names_csv_f, autostart=True, enable_tracing=False, experimental_newlines=False) -> None:
+        # reset files' position before reading
+        compiled_yarn_f.seek(0, 0)
+        names_csv_f.seek(0, 0)
+
         self._compiled_yarn = YarnProgram()
         self._compiled_yarn.ParseFromString(compiled_yarn_f.read())
         self._names_csv = csv.DictReader(names_csv_f)
@@ -20,6 +26,7 @@ class YarnRunner(object):
         self.current_node = None
         self._node_stack = []
         self._command_handlers = {}
+        self._function_handlers = {}
         self._line_buffer = []
         self._option_buffer = []
         self._vm_data_stack = ["Start"]
@@ -147,8 +154,27 @@ class YarnRunner(object):
         self._vm_data_stack.insert(0, choice["choice"])
         self.resume()
 
-    def add_command_handler(self, command, fn):
-        self._command_handlers[command] = fn
+    def add_command_handler(self, command: str, cmd: Callable):
+        """
+        Registers a custom command that can be invoked from Yarn scripts.
+        Like `<<get_player_name>>` or `<<walk MyCharacter StageLeft>>`.
+        Usually these commands don't return anything. Returning a string, will put it on the line where is used.
+        More info on https://docs.yarnspinner.dev/using-yarnspinner-with-unity/creating-commands-functions#defining-commands
+        :param command: A string representing how the command in invoked from the Yarn script
+        :param cmd: A function for handling the invocation.
+        """
+        self._command_handlers[command] = cmd
+
+    def add_function_handler(self, function, fn):
+        """
+        Registers a custom function that can be invoked from Yarn scripts.
+        Like `dice(6)` or `random_range(1,10)`.
+        These functions return something and can be used in conditionals and lines as well.
+        More info on https://docs.yarnspinner.dev/using-yarnspinner-with-unity/creating-commands-functions#defining-functions
+        :param function: A string representing how the function is invoked from the Yarn script
+        :param fn: A function for handling the invocation.
+        """
+        self._function_handlers[function] = fn
 
     def climb_node_stack(self):
         if len(self._node_stack) < 1:
@@ -307,27 +333,37 @@ class YarnRunner(object):
 
     def __call_func(self, instruction):
         function_name = instruction.operands[0].string_value
-        if function_name not in std_lib_functions:
+
+        def execute_std():
+            expected_params, fn = std_lib_functions[function_name]
+            params = extract_params(expected_params)
+            return fn(params)
+
+        def execute_custom():
+            fn = self._function_handlers[function_name]
+            params = extract_params(len(signature(fn).parameters))
+            return fn(*params)
+
+        def extract_params(expected_params):
+            actual_params = int(self._vm_data_stack.pop(0))
+            if expected_params != actual_params:
+                raise Exception(
+                    f"The function `{function_name} expects {expected_params} parameters but received {actual_params} parameters")
+            params = []
+            while expected_params > 0:
+                params.insert(0, self._vm_data_stack.pop(0))
+                expected_params -= 1
+            return params
+
+        if function_name in std_lib_functions:
+            result = execute_std()
+        elif function_name in self._function_handlers:
+            result = execute_custom()
+        else:
             raise Exception(
-                f"The internal function `{function_name}` is not implemented in this Yarn runtime.")
-
-        expected_params, fn = std_lib_functions[function_name]
-        actual_params = int(self._vm_data_stack.pop(0))
-
-        if expected_params != actual_params:
-            raise Exception(
-                f"The internal function `{function_name} expects {expected_params} parameters but received {actual_params} parameters")
-
-        params = []
-        while expected_params > 0:
-            params.insert(0, self._vm_data_stack.pop(0))
-            expected_params -= 1
-
-        # invoke the function
-        ret = fn(params)
-
+                f"The function `{function_name}` is not implemented, and is not registered as a custom function.")
         # Store the return value on the stack
-        self._vm_data_stack.insert(0, ret)
+        self._vm_data_stack.insert(0, result)
 
     def __push_variable(self, instruction):
         variable_name = instruction.operands[0].string_value

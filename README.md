@@ -63,10 +63,11 @@ A few gotchas to look out for:
 As of version v0.0.2, all Yarn Spinner opcodes are currently implemented, as well as Yarn Spinner 1's internal standard library of functions and operators. As of version v0.2.1, typed versions of these functions (introduced in Yarn Spinner 2) are present, but full YS2 parity has not been verified at this time. The known features currently missing are:
 
 - Localisation and Line IDs [(see Yarn's Localization docs)](https://docs.yarnspinner.dev/using-yarnspinner-with-unity/assets-and-localization)
-- An appropriate replacement for the distinction Yarn makes between Functions and Coroutines in Unity (to allow users to register blocking command handlers via this Python runner independent of Unity)
+- An appropriate replacement for the distinction Yarn makes between Functions and Coroutines in Unity (to allow users to register asynchronous command handlers via this Python runner independent of Unity)
 - Complete implementation of YS2's type system, specifically when performing operations on mismatching types
   - This may be challenging, due to Python being a dynamically typed language
-- The [`<<wait>>` built-in command](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/commands#wait)
+- The [`<<wait>>` built-in command](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/commands#wait), but can be added as a custom command using `runner.add_command_handler()`.
+- Most YS2 [built-in functions](https://docs.yarnspinner.dev/getting-started/writing-in-yarn/functions#built-in-functions) are not defined in this runtime, but can be added as custom functions using `runner.add_function_handler()`.
 
 ## Development
 

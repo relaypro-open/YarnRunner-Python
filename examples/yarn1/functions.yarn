@@ -1,0 +1,13 @@
+title: Start
+---
+One plus one is {add_numbers(1, 1)}
+
+// Inside an if statement:
+<<if dice(6) == 6>>
+    You rolled a six!
+<<endif>>
+
+// Inside a line:
+Gambler: My lucky number is {random_range(1,10)}!
+
+===

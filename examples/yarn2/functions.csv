@@ -1,0 +1,4 @@
+id,text,file,node,lineNumber
+line:C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn-Start-0,One plus one is {0},C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn,Start,3
+line:C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn-Start-1,You rolled a six!,C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn,Start,7
+line:C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn-Start-2,Gambler: My lucky number is {0}!,C:\Documents\development\YarnRunner-Python\examples\yarn1\functions.yarn,Start,11
