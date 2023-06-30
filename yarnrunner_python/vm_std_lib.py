@@ -18,12 +18,12 @@ functions = {
 }
 
 typeMethods = {
-    'Boolean': ['EqualTo',
-                'NotEqualTo',
-                'And',
-                'Or',
-                'Xor',
-                'Not'],
+    'Bool':   ['EqualTo',
+               'NotEqualTo',
+               'And',
+               'Or',
+               'Xor',
+               'Not'],
     'Number': ['EqualTo',
                'NotEqualTo',
                'Add',

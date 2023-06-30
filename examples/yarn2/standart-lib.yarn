@@ -3,8 +3,12 @@ title: Start
 
 <<declare $value_bool = false as bool>>
 <<set $value_bool to true>>
-{$value_bool}
+
+<<if $value_bool == true>>
+<<endif>>
+
 // 'Boolean': ['EqualTo',
+{$value_bool}
 {$value_bool == true}
 {$value_bool eq true}
 {$value_bool is true}
