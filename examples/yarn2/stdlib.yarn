@@ -37,29 +37,29 @@ title: Start
 {$value_float != 1.25}
 {$value_float neq 1.25}
 //Add
-¨{1 + 1}
+{1 + 1}
 //Minus
-¨{1 - 1}
+{1 - 1}
 //Divide
-¨{1 / 1}
+{1 / 1}
 //Multiply
-¨{1 * 1}
+{1 * 1}
 //Modulo
-¨{1 % 1}
+{1 % 1}
 //UnaryMinus
-¨{-1}
+{-1}
 //GreaterThan
-¨{1 > 2}
-¨{1 gt 2}
+{1 > 2}
+{1 gt 2}
 //GreaterThanOrEqualTo
-¨{1 >= 2}
-¨{1 gte 2}
+{1 >= 2}
+{1 gte 2}
 //LessThan
-¨{1 < 2}
-¨{1 lt 2}
+{1 < 2}
+{1 lt 2}
 //LessThanOrEqualTo
-¨{1 <= 2}
-¨{1 lte 2}
+{1 <= 2}
+{1 lte 2}
 
 
 //String
