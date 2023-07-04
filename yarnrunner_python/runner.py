@@ -38,8 +38,20 @@ class YarnRunner(object):
         self.paused = True
         self.finished = False
 
+        self.load_initial_vars()
+
         if autostart:
             self.resume()
+
+    def load_initial_vars(self):
+        for key in self._compiled_yarn.initial_values:
+            initial_value = self._compiled_yarn.initial_values[key]
+            if len(initial_value.string_value) > 0:
+                self.variables[key] = initial_value.string_value
+            elif initial_value.float_value != 0:
+                self.variables[key] = initial_value.float_value
+            else:
+                self.variables[key] = initial_value.bool_value
 
     def __construct_string_lookup_table(self):
         self.string_lookup_table = dict()
@@ -382,7 +394,7 @@ class YarnRunner(object):
             return
 
         if variable_name not in self.variables:
-            raise Exception(f"Variable {variable_name} has not been set.")
+            raise Exception(f"Variable {variable_name} has not been set or declared.")
 
         self._vm_data_stack.insert(
             0, self.variables[variable_name])

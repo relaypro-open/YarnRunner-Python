@@ -1,0 +1,4 @@
+id,text,file,node,lineNumber
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn-Start-0,The value of test bool is {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn,Start,7
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn-Start-1,The value of test number is {0},C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn,Start,8
+line:C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn-Start-2,"The value of test string is ""{0}""",C:\Documents\development\YarnRunner-Python\examples\yarn2\declarations.yarn,Start,9
