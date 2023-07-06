@@ -46,11 +46,16 @@ class YarnRunner(object):
     def load_initial_vars(self):
         for key in self._compiled_yarn.initial_values:
             initial_value = self._compiled_yarn.initial_values[key]
-            if len(initial_value.string_value) > 0:
+            # this converts to 'type_value: value'
+            # correctly identifying the declared type
+            # there must be a better way to get this type info
+            # this str conversion must come from somewhere >:(
+            type_value = str(initial_value).split(':')[0]
+            if 'string' in type_value:
                 self.variables[key] = initial_value.string_value
-            elif initial_value.float_value != 0:
+            elif 'float' in type_value:
                 self.variables[key] = initial_value.float_value
-            else:
+            elif 'bool' in type_value:
                 self.variables[key] = initial_value.bool_value
 
     def __construct_string_lookup_table(self):
