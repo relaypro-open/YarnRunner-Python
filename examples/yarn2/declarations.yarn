@@ -1,0 +1,16 @@
+title: Start
+---
+<<declare $testString = "initial value">>
+<<declare $testNum = 1234556>>
+<<declare $testBool = true>>
+<<declare $testStringDefault = "">>
+<<declare $testNumDefault = 0>>
+<<declare $testBoolDefault = false>>
+
+The value of test bool is {$testBool}
+The value of test number is {$testNum}
+The value of test string is "{$testString}"
+The value of test bool is {$testBoolDefault}
+The value of test number is {$testNumDefault}
+The value of test string is "{$testStringDefault}"
+===
