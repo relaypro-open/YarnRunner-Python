@@ -1,0 +1,77 @@
+title: Start
+---
+
+//Bool
+<<declare $value_bool = false as bool>>
+<<set $value_bool to true>>
+
+//EqualTo
+{$value_bool}
+{$value_bool == true}
+{$value_bool eq true}
+{$value_bool is true}
+//NotEqualTo
+{$value_bool != true}
+{$value_bool neq true}
+//And
+{$value_bool && true}
+{$value_bool and true}
+//Or
+{$value_bool || true}
+{$value_bool or true}
+//Xor
+{$value_bool xor true}
+{$value_bool ^ true}
+//Not
+{!$value_bool}
+
+//Number
+<<declare $value_float = 0 as number>>
+<<set $value_float to 1.25>>
+
+//EqualTo
+{$value_float == 1.25}
+{$value_float eq 1.25}
+{$value_float is 1.25}
+//NotEqualTo
+{$value_float != 1.25}
+{$value_float neq 1.25}
+//Add
+{1 + 1}
+//Minus
+{1 - 1}
+//Divide
+{1 / 1}
+//Multiply
+{1 * 1}
+//Modulo
+{1 % 1}
+//UnaryMinus
+{-1}
+//GreaterThan
+{1 > 2}
+{1 gt 2}
+//GreaterThanOrEqualTo
+{1 >= 2}
+{1 gte 2}
+//LessThan
+{1 < 2}
+{1 lt 2}
+//LessThanOrEqualTo
+{1 <= 2}
+{1 lte 2}
+
+
+//String
+<<declare $value_string = "" as string>>
+<<set $value_string to "string">>
+//EqualTo
+{$value_string == "string"}
+{$value_string eq "string"}
+{$value_string is "string"}
+//NotEqualTo
+{$value_string != "string"}
+{$value_string neq "string"}
+//Add
+{$value_string + "string"}
+===
